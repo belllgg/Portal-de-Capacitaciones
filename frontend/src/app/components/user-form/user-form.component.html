@@ -1,0 +1,124 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">{{ isEditMode ? 'Editar Usuario' : 'Crear Nuevo Usuario' }}</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="error" class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+
+          <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                formControlName="email"
+                [class.is-invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+              <div class="invalid-feedback" *ngIf="userForm.get('email')?.errors?.['required']">
+                El email es requerido
+              </div>
+              <div class="invalid-feedback" *ngIf="userForm.get('email')?.errors?.['email']">
+                Por favor ingresa un email válido
+              </div>
+            </div>
+
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="name" class="form-label">Nombre</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+                [class.is-invalid]="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+              <div class="invalid-feedback" *ngIf="userForm.get('name')?.errors?.['required']">
+                El nombre es requerido
+              </div>
+              <div class="invalid-feedback" *ngIf="userForm.get('name')?.errors?.['minlength']">
+                El nombre debe tener al menos 2 caracteres
+              </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="mb-3">
+              <label for="password" class="form-label">
+                Contraseña {{ isEditMode ? '(dejar vacío para no cambiar)' : '' }}
+              </label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                formControlName="password"
+                [class.is-invalid]="userForm.get('password')?.invalid && userForm.get('password')?.touched">
+              <div class="invalid-feedback" *ngIf="userForm.get('password')?.errors?.['required'] && !isEditMode">
+                La contraseña es requerida
+              </div>
+              <div class="invalid-feedback" *ngIf="userForm.get('password')?.errors?.['minlength']">
+                La contraseña debe tener al menos 6 caracteres
+              </div>
+            </div>
+
+            <!-- Rol -->
+            <div class="mb-3">
+              <label for="role" class="form-label">Rol</label>
+              <select
+                class="form-select"
+                id="role"
+                formControlName="role"
+                [class.is-invalid]="userForm.get('role')?.invalid && userForm.get('role')?.touched">
+                <option [ngValue]="null" disabled>Selecciona un rol</option>
+                <option *ngFor="let role of roles" [ngValue]="role.value">
+                  {{ role.label }}
+                </option>
+              </select>
+              <div class="invalid-feedback">
+                Por favor selecciona un rol
+              </div>
+            </div>
+
+            <!-- Estado -->
+            <div class="mb-3">
+              <label for="state" class="form-label">Estado</label>
+              <select
+                class="form-select"
+                id="state"
+                formControlName="state"
+                [class.is-invalid]="userForm.get('state')?.invalid && userForm.get('state')?.touched">
+                <option [ngValue]="null" disabled>Selecciona un estado</option>
+                <option *ngFor="let state of states" [ngValue]="state.value">
+                  {{ state.label }}
+                </option>
+              </select>
+              <div class="invalid-feedback">
+                Por favor selecciona un estado
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex gap-2">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                {{ isEditMode ? 'Actualizar' : 'Crear' }} Usuario
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                [routerLink]="['/users']">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

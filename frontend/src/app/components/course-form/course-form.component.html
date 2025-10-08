@@ -1,0 +1,161 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">{{ isEditMode ? 'Editar Curso' : 'Crear Nuevo Curso' }}</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="error" class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+
+          <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <!-- Título -->
+              <div class="col-md-8 mb-3">
+                <label for="title" class="form-label">Título del Curso *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  formControlName="title"
+                  placeholder="Ej: Introducción a React"
+                  [class.is-invalid]="title?.invalid && title?.touched">
+                <div class="invalid-feedback" *ngIf="title?.errors?.['required']">
+                  El título es requerido
+                </div>
+                <div class="invalid-feedback" *ngIf="title?.errors?.['maxlength']">
+                  El título no puede exceder 255 caracteres
+                </div>
+              </div>
+
+              <!-- Estado -->
+              <div class="col-md-4 mb-3">
+                <label for="stateId" class="form-label">Estado</label>
+                <select
+                  class="form-select"
+                  id="stateId"
+                  formControlName="stateId">
+                  <option *ngFor="let state of states" [value]="state.id">
+                    {{ state.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="mb-3">
+              <label for="description" class="form-label">Descripción</label>
+              <textarea
+                class="form-control"
+                id="description"
+                formControlName="description"
+                rows="4"
+                placeholder="Descripción detallada del curso"></textarea>
+            </div>
+
+            <div class="row">
+              <!-- Módulo -->
+              <div class="col-md-6 mb-3">
+                <label for="moduleId" class="form-label">Módulo *</label>
+                <select
+                  class="form-select"
+                  id="moduleId"
+                  formControlName="moduleId"
+                  [class.is-invalid]="moduleId?.invalid && moduleId?.touched">
+                  <option [value]="null" disabled>Selecciona un módulo</option>
+                  <option *ngFor="let module of modules" [value]="module.id">
+                    {{ module.name }}
+                  </option>
+                </select>
+                <div class="invalid-feedback" *ngIf="moduleId?.errors?.['required']">
+                  El módulo es requerido
+                </div>
+              </div>
+
+              <!-- Instructor -->
+              <div class="col-md-6 mb-3">
+                <label for="instructorName" class="form-label">Instructor</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="instructorName"
+                  formControlName="instructorName"
+                  placeholder="Nombre del instructor"
+                  [class.is-invalid]="instructorName?.invalid && instructorName?.touched">
+                <div class="invalid-feedback" *ngIf="instructorName?.errors?.['maxlength']">
+                  El nombre no puede exceder 100 caracteres
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- URL de Miniatura -->
+              <div class="col-md-8 mb-3">
+                <label for="thumbnailUrl" class="form-label">URL de Miniatura</label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="thumbnailUrl"
+                  formControlName="thumbnailUrl"
+                  placeholder="https://ejemplo.com/imagen.jpg">
+                <small class="form-text text-muted">
+                  URL de la imagen de portada del curso
+                </small>
+              </div>
+
+              <!-- Duración -->
+              <div class="col-md-4 mb-3">
+                <label for="durationHours" class="form-label">Duración (horas)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="durationHours"
+                  formControlName="durationHours"
+                  placeholder="15.5"
+                  step="0.5"
+                  min="0.1"
+                  [class.is-invalid]="durationHours?.invalid && durationHours?.touched">
+                <div class="invalid-feedback" *ngIf="durationHours?.errors?.['min']">
+                  La duración debe ser mayor a 0
+                </div>
+              </div>
+            </div>
+
+            <!-- Vista previa de miniatura -->
+            <div class="mb-3" *ngIf="courseForm.get('thumbnailUrl')?.value">
+              <label class="form-label">Vista previa de miniatura</label>
+              <div class="card" style="max-width: 300px;">
+                <img
+                  [src]="courseForm.get('thumbnailUrl')?.value"
+                  class="card-img-top"
+                  alt="Vista previa"
+                  style="max-height: 200px; object-fit: cover;"
+>              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex gap-2 mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!loading" class="fas fa-save me-1"></i>
+                {{ isEditMode ? 'Actualizar' : 'Crear' }} Curso
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                [routerLink]="['/courses']">
+                <i class="fas fa-times me-1"></i>
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

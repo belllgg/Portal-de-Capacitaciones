@@ -1,0 +1,42 @@
+/* course-list.component.css */
+.course-thumbnail {
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.btn-group-sm .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+}
+
+/* course-form.component.css */
+.card-img-top {
+  border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.invalid-feedback {
+  display: block;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.gap-2 {
+  gap: 0.5rem !important;
+}

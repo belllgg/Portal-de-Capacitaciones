@@ -1,0 +1,51 @@
+
+<ng-container *ngIf="!isAuthenticated()">
+  <router-outlet></router-outlet>
+</ng-container>
+
+<ng-container *ngIf="isAuthenticated()">
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+      <div class="sidebar-header">
+        <i class="fas fa-users-cog"></i>
+        <span class="sidebar-title" *ngIf="!sidebarCollapsed"></span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a *ngFor="let item of menuItems" 
+           [routerLink]="item.route" 
+           routerLinkActive="active"
+           class="sidebar-link"
+           [title]="item.label">
+          <i [class]="item.icon"></i>
+          <span class="link-text" *ngIf="!sidebarCollapsed">{{ item.label }}</span>
+          <span class="badge bg-danger ms-auto" *ngIf="item.badge && !sidebarCollapsed">{{ item.badge }}</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="#" (click)="logout(); $event.preventDefault()" class="sidebar-link text-danger" title="Cerrar Sesión">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="link-text" *ngIf="!sidebarCollapsed">Cerrar Sesión</span>
+        </a>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <header class="top-navbar">
+        <button class="btn btn-link toggle-sidebar" (click)="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="page-title">{{ title }}</h1>
+        <div class="user-info">
+          <i class="fas fa-user-circle"></i>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+</ng-container>

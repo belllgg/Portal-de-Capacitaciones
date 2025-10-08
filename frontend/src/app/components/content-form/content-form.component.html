@@ -1,0 +1,181 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">{{ isEditMode ? 'Editar Contenido' : 'Crear Nuevo Contenido' }}</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="error" class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+
+          <form [formGroup]="contentForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <!-- Curso -->
+              <div class="col-md-6 mb-3">
+                <label for="courseId" class="form-label">Curso *</label>
+                <select
+                  class="form-select"
+                  id="courseId"
+                  formControlName="courseId"
+                  (change)="onCourseChange()"
+                  [class.is-invalid]="courseId?.invalid && courseId?.touched">
+                  <option [value]="null" disabled>Selecciona un curso</option>
+                  <option *ngFor="let course of courses" [value]="course.id">
+                    {{ course.title }}
+                  </option>
+                </select>
+                <div class="invalid-feedback" *ngIf="courseId?.errors?.['required']">
+                  El curso es requerido
+                </div>
+              </div>
+
+              <!-- Capítulo -->
+              <div class="col-md-6 mb-3">
+                <label for="chapterId" class="form-label">Capítulo *</label>
+                <select
+                  class="form-select"
+                  id="chapterId"
+                  formControlName="chapterId"
+                  [disabled]="chapters.length === 0"
+                  [class.is-invalid]="chapterId?.invalid && chapterId?.touched">
+                  <option [value]="null" disabled>Selecciona un capítulo</option>
+                  <option *ngFor="let chapter of chapters" [value]="chapter.id">
+                    {{ chapter.orderIndex }}. {{ chapter.title }}
+                  </option>
+                </select>
+                <div class="invalid-feedback" *ngIf="chapterId?.errors?.['required']">
+                  El capítulo es requerido
+                </div>
+                <small class="form-text text-muted" *ngIf="chapters.length === 0 && courseId?.value">
+                  Este curso no tiene capítulos. Crea uno primero.
+                </small>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Tipo de Contenido -->
+              <div class="col-md-6 mb-3">
+                <label for="contentTypeId" class="form-label">Tipo de Contenido *</label>
+                <select
+                  class="form-select"
+                  id="contentTypeId"
+                  formControlName="contentTypeId"
+                  [class.is-invalid]="contentTypeId?.invalid && contentTypeId?.touched">
+                  <option *ngFor="let type of contentTypes" [value]="type.id">
+                    <i [class]="getContentTypeIcon(type.id)"></i>
+                    {{ type.name }}
+                  </option>
+                </select>
+                <div class="invalid-feedback" *ngIf="contentTypeId?.errors?.['required']">
+                  El tipo de contenido es requerido
+                </div>
+                <div class="mt-2">
+                  <span class="badge bg-light text-dark p-2">
+                    <i [class]="getContentTypeIcon(contentForm.get('contentTypeId')?.value)"></i>
+                    Vista previa
+                  </span>
+                </div>
+              </div>
+
+              <!-- Título -->
+              <div class="col-md-6 mb-3">
+                <label for="title" class="form-label">Título (Opcional)</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  formControlName="title"
+                  placeholder="Ej: Video de introducción"
+                  [class.is-invalid]="title?.invalid && title?.touched">
+                <div class="invalid-feedback" *ngIf="title?.errors?.['maxlength']">
+                  El título no puede exceder 255 caracteres
+                </div>
+              </div>
+            </div>
+
+            <!-- URL del Archivo -->
+            <div class="mb-3">
+              <label for="fileUrl" class="form-label">URL del Archivo *</label>
+              <input
+                type="url"
+                class="form-control"
+                id="fileUrl"
+                formControlName="fileUrl"
+                placeholder="https://ejemplo.com/archivo.pdf"
+                [class.is-invalid]="fileUrl?.invalid && fileUrl?.touched">
+              <div class="invalid-feedback" *ngIf="fileUrl?.errors?.['required']">
+                La URL del archivo es requerida
+              </div>
+              <div class="invalid-feedback" *ngIf="fileUrl?.errors?.['maxlength']">
+                La URL no puede exceder 500 caracteres
+              </div>
+              <small class="form-text text-muted">
+                Ingresa la URL completa del archivo (video, PDF, documento, etc.)
+              </small>
+            </div>
+
+            <div class="row">
+              <!-- Tamaño del Archivo -->
+              <div class="col-md-6 mb-3">
+                <label for="fileSizeMb" class="form-label">Tamaño (MB) (Opcional)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="fileSizeMb"
+                  formControlName="fileSizeMb"
+                  placeholder="2.5"
+                  step="0.1"
+                  min="0"
+                  [class.is-invalid]="fileSizeMb?.invalid && fileSizeMb?.touched">
+                <div class="invalid-feedback" *ngIf="fileSizeMb?.errors?.['min']">
+                  El tamaño debe ser mayor o igual a 0
+                </div>
+              </div>
+
+              <!-- Orden -->
+              <div class="col-md-6 mb-3">
+                <label for="orderIndex" class="form-label">Orden *</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="orderIndex"
+                  formControlName="orderIndex"
+                  min="1"
+                  [class.is-invalid]="orderIndex?.invalid && orderIndex?.touched">
+                <div class="invalid-feedback" *ngIf="orderIndex?.errors?.['required']">
+                  El orden es requerido
+                </div>
+                <div class="invalid-feedback" *ngIf="orderIndex?.errors?.['min']">
+                  El orden debe ser mayor a 0
+                </div>
+                <small class="form-text text-muted">Posición del contenido en el capítulo</small>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex gap-2 mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!loading" class="fas fa-save me-1"></i>
+                {{ isEditMode ? 'Actualizar' : 'Crear' }} Contenido
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                [routerLink]="['/contents']"
+                [queryParams]="preselectedChapterId ? { chapterId: preselectedChapterId } : {}">
+                <i class="fas fa-times me-1"></i>
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

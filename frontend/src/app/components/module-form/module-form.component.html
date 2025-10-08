@@ -1,0 +1,83 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">{{ isEditMode ? 'Editar Módulo' : 'Crear Nuevo Módulo' }}</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="error" class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+
+          <form [formGroup]="moduleForm" (ngSubmit)="onSubmit()">
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="name" class="form-label">Nombre del Módulo</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+                placeholder="Ej: React, Node.js, Python"
+                [class.is-invalid]="moduleForm.get('name')?.invalid && moduleForm.get('name')?.touched">
+              <div class="invalid-feedback" *ngIf="moduleForm.get('name')?.errors?.['required']">
+                El nombre es requerido
+              </div>
+              <div class="invalid-feedback" *ngIf="moduleForm.get('name')?.errors?.['maxlength']">
+                El nombre no puede exceder 100 caracteres
+              </div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="mb-3">
+              <label for="description" class="form-label">Descripción</label>
+              <textarea
+                class="form-control"
+                id="description"
+                formControlName="description"
+                rows="3"
+                placeholder="Descripción del módulo (opcional)"></textarea>
+            </div>
+
+            <!-- Icono -->
+            <div class="mb-3">
+              <label for="icon" class="form-label">Icono</label>
+              <select
+                class="form-select"
+                id="icon"
+                formControlName="icon">
+                <option *ngFor="let iconOption of availableIcons" [value]="iconOption.value">
+                  {{ iconOption.label }}
+                </option>
+              </select>
+              <div class="mt-2">
+                <span class="badge bg-light text-dark p-3">
+                  <i [class]="moduleForm.get('icon')?.value" class="preview-icon"></i>
+                  Vista previa
+                </span>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex gap-2">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                {{ isEditMode ? 'Actualizar' : 'Crear' }} Módulo
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                [routerLink]="['/modules']">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

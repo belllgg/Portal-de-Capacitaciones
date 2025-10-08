@@ -1,0 +1,182 @@
+/* ============================================
+   Estilos compartidos para componentes de progreso
+   ============================================ */
+
+/* Efecto hover en tarjetas */
+.hover-shadow {
+  transition: all 0.3s ease;
+}
+
+.hover-shadow:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Animación para barras de progreso */
+.progress-bar {
+  transition: width 0.6s ease;
+}
+
+/* Estilos para badges de estado */
+.badge {
+  font-weight: 500;
+  padding: 0.5em 0.75em;
+}
+
+/* Cards de estadísticas del dashboard */
+.card.bg-primary,
+.card.bg-success,
+.card.bg-info,
+.card.bg-warning {
+  border: none;
+  transition: transform 0.2s ease;
+}
+
+.card.bg-primary:hover,
+.card.bg-success:hover,
+.card.bg-info:hover,
+.card.bg-warning:hover {
+  transform: scale(1.05);
+}
+
+/* Lista de capítulos */
+.list-group-item {
+  transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa !important;
+}
+
+.list-group-item.bg-light {
+  background-color: #e9ecef !important;
+}
+
+/* Círculo de número de capítulo */
+.rounded-circle {
+  font-weight: bold;
+  font-size: 0.875rem;
+}
+
+/* Overlay de curso completado */
+.position-relative img {
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .position-relative img {
+  opacity: 1 !important;
+}
+
+/* Botones con iconos */
+.btn i {
+  transition: transform 0.2s ease;
+}
+
+.btn:hover i {
+  transform: scale(1.1);
+}
+
+/* Spinner personalizado */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.2em;
+}
+
+/* Alertas con iconos grandes */
+.alert .fa-2x,
+.alert .fa-3x,
+.alert .fa-4x {
+  opacity: 0.8;
+}
+
+/* Breadcrumb personalizado */
+.breadcrumb {
+  background-color: transparent;
+  padding: 0.5rem 0;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  font-weight: bold;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeIn 0.5s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .btn-lg {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Progress bar personalizada */
+.progress {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Colores personalizados para progreso */
+.bg-danger { background-color: #dc3545 !important; }
+.bg-warning { background-color: #ffc107 !important; }
+.bg-info { background-color: #17a2b8 !important; }
+.bg-success { background-color: #28a745 !important; }
+
+/* Efectos en imágenes */
+img.card-img-top {
+  transition: transform 0.3s ease;
+}
+
+.card:hover img.card-img-top {
+  transform: scale(1.05);
+}
+
+/* Bordes personalizados */
+.border-success {
+  border-color: #28a745 !important;
+  border-width: 2px !important;
+}
+
+/* Opacity utilities */
+.opacity-25 { opacity: 0.25; }
+.opacity-50 { opacity: 0.5; }
+.opacity-75 { opacity: 0.75; }
+
+/* Text decoration utilities */
+.text-decoration-line-through {
+  text-decoration: line-through;
+}
+
+/* Badge de progreso flotante */
+.position-absolute.badge {
+  z-index: 10;
+}
+
+/* Sombra para overlay de completado */
+.shadow-lg {
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}

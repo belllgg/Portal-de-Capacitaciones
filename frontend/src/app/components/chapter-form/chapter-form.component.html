@@ -1,0 +1,135 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">{{ isEditMode ? 'Editar Capítulo' : 'Crear Nuevo Capítulo' }}</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="error" class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+
+          <form [formGroup]="chapterForm" (ngSubmit)="onSubmit()">
+            <!-- Curso -->
+            <div class="mb-3">
+              <label for="courseId" class="form-label">Curso *</label>
+              <select
+                class="form-select"
+                id="courseId"
+                formControlName="courseId"
+                [class.is-invalid]="courseId?.invalid && courseId?.touched">
+                <option [value]="null" disabled>Selecciona un curso</option>
+                <option *ngFor="let course of courses" [value]="course.id">
+                  {{ course.title }}
+                </option>
+              </select>
+              <div class="invalid-feedback" *ngIf="courseId?.errors?.['required']">
+                El curso es requerido
+              </div>
+            </div>
+
+            <!-- Título -->
+            <div class="mb-3">
+              <label for="title" class="form-label">Título del Capítulo *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="title"
+                formControlName="title"
+                placeholder="Ej: Introducción a los Hooks"
+                [class.is-invalid]="title?.invalid && title?.touched">
+              <div class="invalid-feedback" *ngIf="title?.errors?.['required']">
+                El título es requerido
+              </div>
+              <div class="invalid-feedback" *ngIf="title?.errors?.['maxlength']">
+                El título no puede exceder 255 caracteres
+              </div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="mb-3">
+              <label for="description" class="form-label">Descripción</label>
+              <textarea
+                class="form-control"
+                id="description"
+                formControlName="description"
+                rows="3"
+                placeholder="Descripción del capítulo (opcional)"></textarea>
+            </div>
+
+            <div class="row">
+              <!-- Orden -->
+              <div class="col-md-4 mb-3">
+                <label for="orderIndex" class="form-label">Orden *</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="orderIndex"
+                  formControlName="orderIndex"
+                  min="1"
+                  [class.is-invalid]="orderIndex?.invalid && orderIndex?.touched">
+                <div class="invalid-feedback" *ngIf="orderIndex?.errors?.['required']">
+                  El orden es requerido
+                </div>
+                <div class="invalid-feedback" *ngIf="orderIndex?.errors?.['min']">
+                  El orden debe ser mayor a 0
+                </div>
+                <small class="form-text text-muted">Posición del capítulo en el curso</small>
+              </div>
+
+              <!-- Duración -->
+              <div class="col-md-4 mb-3">
+                <label for="durationMinutes" class="form-label">Duración (minutos)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="durationMinutes"
+                  formControlName="durationMinutes"
+                  min="1"
+                  placeholder="30"
+                  [class.is-invalid]="durationMinutes?.invalid && durationMinutes?.touched">
+                <div class="invalid-feedback" *ngIf="durationMinutes?.errors?.['min']">
+                  La duración debe ser mayor a 0
+                </div>
+              </div>
+
+              <!-- Estado -->
+              <div class="col-md-4 mb-3">
+                <label for="stateId" class="form-label">Estado</label>
+                <select
+                  class="form-select"
+                  id="stateId"
+                  formControlName="stateId">
+                  <option *ngFor="let state of states" [value]="state.id">
+                    {{ state.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex gap-2 mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!loading" class="fas fa-save me-1"></i>
+                {{ isEditMode ? 'Actualizar' : 'Crear' }} Capítulo
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                [routerLink]="['/chapters']"
+                [queryParams]="preselectedCourseId ? { courseId: preselectedCourseId } : {}">
+                <i class="fas fa-times me-1"></i>
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

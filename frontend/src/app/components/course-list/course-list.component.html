@@ -1,0 +1,154 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Administración de Cursos</h2>
+    <button class="btn btn-primary" routerLink="/courses/create">
+      <i class="fas fa-plus"></i> Nuevo Curso
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="searchText" class="form-label">Buscar</label>
+          <input
+            type="text"
+            class="form-control"
+            id="searchText"
+            [(ngModel)]="searchText"
+            (input)="onSearchChange()"
+            placeholder="Buscar por título o descripción...">
+        </div>
+        <div class="col-md-3">
+          <label for="moduleFilter" class="form-label">Módulo</label>
+          <select
+            class="form-select"
+            id="moduleFilter"
+            [(ngModel)]="selectedModule"
+            (change)="onModuleFilterChange()">
+            <option [ngValue]="null">Todos los módulos</option>
+            <option *ngFor="let module of modules" [ngValue]="module.id">
+              {{ module.name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="stateFilter" class="form-label">Estado</label>
+          <select
+            class="form-select"
+            id="stateFilter"
+            [(ngModel)]="selectedState"
+            (change)="onStateFilterChange()">
+            <option [ngValue]="null">Todos los estados</option>
+            <option *ngFor="let state of states" [ngValue]="state.id">
+              {{ state.name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-secondary w-100" (click)="clearFilters()">
+            <i class="fas fa-times"></i> Limpiar
+          </button>
+        </div>
+      </div>
+      <div class="mt-2 text-muted">
+        <small>Mostrando {{ filteredCourses.length }} de {{ courses.length }} cursos</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+
+  <!-- Tabla de Cursos -->
+  <div *ngIf="!loading && !error" class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Módulo</th>
+              <th>Instructor</th>
+              <th>Duración</th>
+              <th>Estado</th>
+              <th>Capítulos</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let course of filteredCourses">
+              <td>{{ course.id }}</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img
+                    *ngIf="course.thumbnailUrl"
+                    [src]="course.thumbnailUrl"
+                    alt="{{ course.title }}"
+                    class="course-thumbnail me-2"
+                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                  <div>
+                    <strong>{{ course.title }}</strong>
+                    <br>
+                    <small class="text-muted" *ngIf="course.description">
+                      {{ course.description.substring(0, 60) }}{{ course.description.length > 60 ? '...' : '' }}
+                    </small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <i [class]="course.moduleIcon || 'fas fa-folder'" class="me-1"></i>
+                {{ course.moduleName || 'N/A' }}
+              </td>
+              <td>{{ course.instructorName || '-' }}</td>
+              <td>
+                <span *ngIf="course.durationHours">
+                  {{ course.durationHours }}h
+                </span>
+                <span *ngIf="!course.durationHours">-</span>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="getStateBadgeClass(course.stateId)">
+                  {{ course.stateName || 'Desconocido' }}
+                </span>
+              </td>
+              <td>
+                <span class="badge bg-info" *ngIf="course.chaptersCount !== undefined">
+                  {{ course.chaptersCount }} total
+                </span>
+                <span class="badge bg-success ms-1" *ngIf="course.publishedChaptersCount">
+                  {{ course.publishedChaptersCount }} publicados
+                </span>
+                <span *ngIf="course.chaptersCount === undefined">-</span>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-2"
+                        (click)="editCourse(course)">
+                  <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="btn btn-sm btn-outline-danger"
+                        (click)="deleteCourse(course)">
+                  <i class="fas fa-trash"></i> Eliminar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="filteredCourses.length === 0" class="text-center text-muted py-4">
+        No hay cursos que coincidan con los filtros seleccionados
+      </div>
+    </div>
+  </div>
+</div>

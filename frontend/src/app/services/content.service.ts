@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { API_CONFIG } from '../config/api.config';
 
 export interface Content {
   id: number;
@@ -68,7 +69,7 @@ export interface ContentStats {
   providedIn: 'root'
 })
 export class ContentService {
-  private apiUrl = 'http://localhost:3000/api/contents';
+private apiUrl = `${API_CONFIG.apiUrl}/api/contents`;
 
   constructor(private http: HttpClient) {}
 

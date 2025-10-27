@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
 import { CourseService } from './course.service';
+import { API_CONFIG } from '../config/api.config';
 
 export interface Module {
   id: number;
@@ -30,7 +31,7 @@ export interface UpdateModuleDto {
   providedIn: 'root'
 })
 export class ModuleService {
-  private apiUrl = 'http://localhost:3000/api/modules';
+private apiUrl = `${API_CONFIG.apiUrl}/api/modules`;
 
   constructor(
     private http: HttpClient,

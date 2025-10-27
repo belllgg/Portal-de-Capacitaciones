@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
+import { API_CONFIG } from '../config/api.config';
 
 export interface ModuleProgress {
   moduleId: number;
@@ -120,7 +121,7 @@ export interface CompleteChapterDto {
   providedIn: 'root'
 })
 export class ProgressService {
-  private apiUrl = 'http://localhost:3000/api/progress';
+private apiUrl = `${API_CONFIG.apiUrl}/api/progress`;
 
   constructor(private http: HttpClient,
   private authService: AuthService 

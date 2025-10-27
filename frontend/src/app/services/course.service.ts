@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
 import { ChapterService } from './chapter.service'; 
+import { API_CONFIG } from '../config/api.config';
 
 export interface Course {
   id: number;
@@ -55,7 +56,7 @@ export interface ChangeStateDto {
   providedIn: 'root'
 })
 export class CourseService {
-  private apiUrl = 'http://localhost:3000/api/courses';
+private apiUrl = `${API_CONFIG.apiUrl}/api/courses`;
 
   constructor(
     private http: HttpClient,

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { API_CONFIG } from '../config/api.config';
 
 export interface Chapter {
   id: number;
@@ -62,7 +63,7 @@ export interface ChapterStats {
   providedIn: 'root'
 })
 export class ChapterService {
-  private apiUrl = 'http://localhost:3000/api/chapters';
+private apiUrl = `${API_CONFIG.apiUrl}/api/chapters`;
 
   constructor(private http: HttpClient) {}
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable ,map } from 'rxjs';
+import { API_CONFIG } from '../config/api.config';
 
 export interface User {
   id?: number;
@@ -40,7 +41,7 @@ export interface UpdateUserDto {
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:3000/api/users';
+private apiUrl = `${API_CONFIG.apiUrl}/api/users`;
 
   constructor(private http: HttpClient) {}
 

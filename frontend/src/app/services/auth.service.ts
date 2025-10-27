@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap, catchError } from 'rxjs';
+import { API_CONFIG } from '../config/api.config';
 
 export interface LoginDto {
   email: string;
@@ -35,7 +36,7 @@ export interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api';
+private apiUrl = `${API_CONFIG.apiUrl}/api`;
 
   constructor(private http: HttpClient) {}
 

@@ -5,7 +5,10 @@ nixPkgs = ["nodejs_20"]
 cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = [
+  "npx ng build",
+  "ls -la dist/portal-capacitaciones/"
+]
 
 [start]
 cmd = "npm run serve:ssr:portal-capacitaciones"

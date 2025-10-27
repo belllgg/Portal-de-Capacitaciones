@@ -19,7 +19,8 @@ async function bootstrap() {
  app.enableCors({
   origin: [
     'http://localhost:4200',                                         
-    'https://portal-de-capacitaciones-production.up.railway.app',    
+    'https://portal-de-capacitaciones-production.up.railway.app',  
+    'https://diplomatic-optimism-production.up.railway.app',  
     /https:\/\/.*\.railway\.app$/                                    
   ],
   credentials: true,

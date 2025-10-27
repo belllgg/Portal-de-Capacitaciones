@@ -16,10 +16,14 @@ async function bootstrap() {
  
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  app.enableCors({
-   origin: 'http://localhost:4200', 
-    credentials: true,
-  });
+ app.enableCors({
+  origin: [
+    'http://localhost:4200',                                         
+    'https://portal-de-capacitaciones-production.up.railway.app',    
+    /https:\/\/.*\.railway\.app$/                                    
+  ],
+  credentials: true,
+});
 
   const config = new DocumentBuilder()
     .setTitle('API')

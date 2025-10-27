@@ -14,9 +14,7 @@ export class BadgeConsultDao {
     private readonly userBadgeRepository: Repository<UserBadge>,
   ) {}
 
-  /**
-   * Obtener todos los tipos de insignias
-   */
+  
   async findAllBadgeTypes(): Promise<BadgeType[]> {
     try {
       return await this.badgeTypeRepository.find({
@@ -31,9 +29,7 @@ export class BadgeConsultDao {
     }
   }
 
-  /**
-   * Obtener un tipo de insignia por ID
-   */
+
   async findBadgeTypeById(id: number): Promise<BadgeType | null> {
     try {
       return await this.badgeTypeRepository.findOne({ where: { id } });
@@ -46,9 +42,6 @@ export class BadgeConsultDao {
     }
   }
 
-  /**
-   * Verificar si existe un tipo de insignia por nombre
-   */
   async existsBadgeTypeByName(name: string): Promise<boolean> {
     try {
       const count = await this.badgeTypeRepository.count({ where: { name } });
@@ -62,13 +55,7 @@ export class BadgeConsultDao {
     }
   }
 
-  // ==========================================
-  // CONSULTAS DE USER BADGES
-  // ==========================================
 
-  /**
-   * Obtener todas las insignias de un usuario
-   */
   async findUserBadges(userId: number): Promise<UserBadge[]> {
     try {
       return await this.userBadgeRepository.find({
@@ -85,9 +72,6 @@ export class BadgeConsultDao {
     }
   }
 
-  /**
-   * Verificar si un usuario ya tiene una insignia específica
-   */
   async userHasBadge(
     userId: number, 
     badgeTypeId: number, 
@@ -111,9 +95,6 @@ export class BadgeConsultDao {
     }
   }
 
-  /**
-   * Contar insignias de un usuario
-   */
   async countUserBadges(userId: number): Promise<number> {
     try {
       return await this.userBadgeRepository.count({ where: { userId } });
@@ -126,9 +107,6 @@ export class BadgeConsultDao {
     }
   }
 
-  /**
-   * Contar insignias por tipo para un usuario
-   */
   async countUserBadgesByType(userId: number): Promise<any[]> {
     try {
       return await this.userBadgeRepository
@@ -152,9 +130,6 @@ export class BadgeConsultDao {
     }
   }
 
-  /**
-   * Obtener insignias recientes de un usuario
-   */
   async findRecentUserBadges(userId: number, limit: number = 5): Promise<UserBadge[]> {
     try {
       return await this.userBadgeRepository.find({
@@ -172,13 +147,7 @@ export class BadgeConsultDao {
     }
   }
 
-  // ==========================================
-  // ESTADÍSTICAS Y ANALYTICS
-  // ==========================================
 
-  /**
-   * Obtener estadísticas de un tipo de insignia
-   */
   async getBadgeTypeStats(badgeTypeId: number): Promise<any> {
     try {
       const result = await this.userBadgeRepository
@@ -198,9 +167,6 @@ export class BadgeConsultDao {
     }
   }
 
-  /**
-   * Obtener ranking de usuarios por cantidad de insignias
-   */
   async getBadgeRanking(limit: number = 10): Promise<any[]> {
     try {
       return await this.userBadgeRepository
@@ -225,9 +191,6 @@ export class BadgeConsultDao {
     }
   }
 
-  /**
-   * Obtener todas las insignias otorgadas para un curso específico
-   */
   async findBadgesByCourse(courseId: number): Promise<UserBadge[]> {
     try {
       return await this.userBadgeRepository.find({
@@ -244,9 +207,7 @@ export class BadgeConsultDao {
     }
   }
 
-  /**
-   * Obtener usuarios que tienen una insignia específica
-   */
+ 
   async findUsersWithBadge(badgeTypeId: number): Promise<UserBadge[]> {
     try {
       return await this.userBadgeRepository.find({

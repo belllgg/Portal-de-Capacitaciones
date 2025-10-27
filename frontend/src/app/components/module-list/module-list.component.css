@@ -1,4 +1,16 @@
-/* src/app/components/module-list/module-list.component.css */
+
+.module-icon {
+  font-size: 1.5rem;
+  color: #3b82f6;
+}
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clickable-row:hover {
+  background-color: #f8f9fa !important;
+}
 
 .module-icon {
   font-size: 1.5rem;

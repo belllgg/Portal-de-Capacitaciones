@@ -13,9 +13,7 @@ export class ModuleCreateDao {
     private readonly moduleRepository: Repository<Modules>,
   ) {}
 
-  /**
-   * Crear un nuevo módulo
-   */
+
   async create(createModuleDto: CreateModuleDto): Promise<Modules> {
     try {
       const module = this.moduleRepository.create(createModuleDto);
@@ -23,7 +21,6 @@ export class ModuleCreateDao {
     } catch (error) {
       this.logger.error(`Error al crear módulo en BD: ${error.message}`, error.stack);
       
-      // Manejo de error de duplicado (nombre único)
       if (error.code === '23505') { // Código de PostgreSQL para violación de UNIQUE
         throw new HttpException(
           'Ya existe un módulo con ese nombre',

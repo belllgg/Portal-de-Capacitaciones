@@ -22,7 +22,6 @@ export class CourseCreateDao {
 
     const savedCourse = await this.courseRepository.save(course);
 
-    // Buscar curso con sus relaciones
     const courseWithRelations = await this.courseRepository.findOne({
       where: { id: savedCourse.id },
       relations: ['module', 'state', 'creator'],
@@ -40,7 +39,6 @@ export class CourseCreateDao {
   } catch (error) {
     this.logger.error(`Error al crear curso en BD: ${error.message}`, error.stack);
 
-    // Manejo de error de foreign key
     if (error.code === '23503') {
       throw new HttpException(
         'Error de clave foránea, revisa los IDs relacionados',

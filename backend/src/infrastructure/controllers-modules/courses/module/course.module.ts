@@ -12,7 +12,7 @@ import { CourseConsultService } from 'src/application/services/courses/course-co
 import { CourseDeleteService } from 'src/application/services/courses/course-delete.service';
 import { CoursesController } from 'src/infrastructure/controllers-modules/courses/controller/course.controller';
 import { AuthModule } from 'src/infrastructure/auth/auth.module';
-import { PassportModule } from '@nestjs/passport'; // 
+import { PassportModule } from '@nestjs/passport'; 
 import { CategoryModuleM    } from 'src/infrastructure/controllers-modules/modules-category/module/module-category.module';
 
 @Module({

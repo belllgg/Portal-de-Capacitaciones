@@ -11,15 +11,12 @@ export class CourseDeleteService {
     private readonly CourseDeleteDao: CourseDeleteDao,
   ) {}
 
-  /**
-   * Eliminar un curso (soft delete - cambiar a ARCHIVED)
-   */
+
   async softDelete(id: number): Promise<{ 
     success: boolean; 
     message: string 
   }> {
     try {
-      // Verificar que el curso existe
       const exists = await this.courseConsultDao.existsById(id);
       
       if (!exists) {
@@ -29,7 +26,6 @@ export class CourseDeleteService {
         };
       }
 
-      // Archivar el curso
       await this.CourseDeleteDao.softDelete(id);
 
       return {
@@ -42,15 +38,12 @@ export class CourseDeleteService {
     }
   }
 
-  /**
-   * Eliminar un curso permanentemente (solo ADMIN)
-   */
+
   async delete(id: number): Promise<{ 
     success: boolean; 
     message: string 
   }> {
     try {
-      // Verificar que el curso existe
       const exists = await this.courseConsultDao.existsById(id);
       
       if (!exists) {
@@ -60,7 +53,6 @@ export class CourseDeleteService {
         };
       }
 
-      // Eliminar el curso
       const deleted = await this.CourseDeleteDao.delete(id);
 
       if (!deleted) {

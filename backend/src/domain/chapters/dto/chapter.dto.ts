@@ -30,7 +30,7 @@ export class CreateChapterDto {
 
   @IsInt()
   @IsOptional()
-  stateId?: number; // Por defecto será 2 (PUBLISHED) en la BD
+  stateId?: number; 
 }
 
 export class UpdateChapterDto {
@@ -58,10 +58,9 @@ export class UpdateChapterDto {
   stateId?: number;
 }
 
-// DTO para reordenar capítulos
 export class ReorderChaptersDto {
   @IsNotEmpty({ message: 'El array de IDs es obligatorio' })
-  chapterIds: number[]; // Array de IDs en el nuevo orden
+  chapterIds: number[]; 
 }
 
 // ============================================
@@ -93,7 +92,7 @@ export class ChapterListItemDto {
   orderIndex: number;
   durationMinutes: number;
   stateName: string;
-  contentsCount?: number; // Cantidad de contenidos (videos, PDFs, etc.)
+  contentsCount?: number; 
 }
 
 export class ChapterSimpleDto {
@@ -104,10 +103,9 @@ export class ChapterSimpleDto {
 }
 
 export class ChapterWithContentsDto extends ChapterResponseDto {
-  contents: any[]; // TODO: Definir cuando creemos ChapterContent
+  contents: any[]; 
 }
 
-// DTO para cambiar solo el estado
 export class ChangeChapterStateDto {
   @IsInt()
   @IsNotEmpty({ message: 'El ID del estado es obligatorio' })

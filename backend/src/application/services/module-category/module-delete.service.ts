@@ -46,7 +46,6 @@ export class ModuleDeleteService {
     } catch (error) {
       this.logger.error(`Error al eliminar módulo: ${error.message}`, error.stack);
       
-      // Si el error es por cursos asociados, ya se maneja en el DAO
       throw error;
     }
   }

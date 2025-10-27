@@ -1,4 +1,3 @@
-// src/app/components/login/login.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -23,7 +22,7 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      email: ['usuario@test.com', [Validators.required, Validators.email]], // Cambiado a email
+      email: ['usuario@test.com', [Validators.required, Validators.email]], 
       password: ['claveSegura123', [Validators.required]]
     });
   }
@@ -49,12 +48,10 @@ export class LoginComponent {
         }
       });
     } else {
-      // Marcar todos los campos como tocados para mostrar errores
       this.loginForm.markAllAsTouched();
     }
   }
 
-  // ✅ GETTERS ACTUALIZADOS
   get email() { return this.loginForm.get('email'); }
   get password() { return this.loginForm.get('password'); }
 }

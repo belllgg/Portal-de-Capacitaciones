@@ -1,15 +1,25 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Administración de Contenidos</h2>
-    <button 
-      class="btn btn-primary" 
-      (click)="createContent()"
-      [disabled]="!selectedChapterId">
-      <i class="fas fa-plus"></i> Nuevo Contenido
-    </button>
+<div class="d-flex" style="gap: 0.5rem;">   
+      <button 
+        class="btn btn-info"
+        (click)="goToChapters()"
+        [disabled]="!selectedCourseId"
+        title="Ver capítulos del curso">
+        <i class="fas fa-book me-1"></i> Ver Capítulos
+      </button>
+      
+      <button *ngIf="authService.canCreateContent()"
+        class="btn btn-primary" 
+        (click)="createContent()"
+        [disabled]="!selectedChapterId"
+        title="Crear nuevo contenido">
+        <i class="fas fa-plus me-1"></i> Nuevo Contenido
+      </button>
+    </div>
   </div>
 
-  <!-- Selectores de Curso y Capítulo -->
   <div class="card mb-4">
     <div class="card-body">
       <div class="row">
@@ -65,19 +75,79 @@
     </div>
   </div>
 
-  <!-- Loading -->
+  <div *ngIf="viewingContent" id="content-viewer" class="card mb-4 shadow-lg">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">
+        <i [class]="getContentTypeIcon(viewingContent.contentTypeId)"></i>
+        {{ viewingContent.title || 'Sin título' }}
+      </h5>
+      <button class="btn btn-sm btn-light" (click)="closeViewer()">
+        <i class="fas fa-times"></i> Cerrar
+      </button>
+    </div>
+    <div class="card-body p-0">
+      <div *ngIf="isVideoContent(viewingContent)" class="ratio ratio-16x9">
+        <iframe 
+          *ngIf="isYouTubeUrl(viewingContent.fileUrl)"
+          [src]="safeUrl" 
+          frameborder="0" 
+          allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+        </iframe>
+        
+        <video 
+          *ngIf="!isYouTubeUrl(viewingContent.fileUrl)"
+          controls 
+          class="w-100 h-100"
+          [src]="viewingContent.fileUrl">
+          Tu navegador no soporta la reproducción de video.
+        </video>
+      </div>
+
+      <div *ngIf="isPdfContent(viewingContent)">
+        <div style="height: 600px;">
+          <iframe 
+            [src]="safeUrl" 
+            frameborder="0" 
+            width="100%" 
+            height="100%">
+          </iframe>
+        </div>
+        <div class="text-center mt-3 mb-3">
+          <p class="text-muted">¿No se muestra el PDF?</p>
+          <a [href]="viewingContent.fileUrl" target="_blank" class="btn btn-primary">
+            <i class="fas fa-download"></i> Abrir/Descargar PDF
+          </a>
+        </div>
+      </div>
+
+      <div *ngIf="!isVideoContent(viewingContent) && !isPdfContent(viewingContent)" class="p-4 text-center">
+        <i [class]="getContentTypeIcon(viewingContent.contentTypeId)" class="fa-3x mb-3"></i>
+        <p>Este tipo de contenido no se puede visualizar aquí.</p>
+        <a [href]="viewingContent.fileUrl" target="_blank" class="btn btn-primary">
+          <i class="fas fa-external-link-alt"></i> Abrir en nueva pestaña
+        </a>
+      </div>
+    </div>
+    <div class="card-footer">
+      <small class="text-muted">
+        <strong>Tipo:</strong> {{ getContentTypeName(viewingContent.contentTypeId) }} | 
+        <strong>Tamaño:</strong> {{ formatFileSize(viewingContent.fileSizeMb) }} | 
+        <strong>URL:</strong> <a [href]="viewingContent.fileUrl" target="_blank">{{ viewingContent.fileUrl }}</a>
+      </small>
+    </div>
+  </div>
+
   <div *ngIf="loading" class="text-center">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Cargando...</span>
     </div>
   </div>
 
-  <!-- Error -->
   <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
     {{ error }}
   </div>
 
-  <!-- Tabla de Contenidos -->
   <div *ngIf="!loading && !error && selectedChapterId" class="card">
     <div class="card-body">
       <div class="table-responsive">
@@ -93,7 +163,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let content of contents; let i = index">
+            <tr *ngFor="let content of contents; let i = index"
+                [class.table-primary]="viewingContent?.id === content.id">
               <td class="text-center">
                 <span class="badge bg-secondary">{{ content.orderIndex }}</span>
               </td>
@@ -114,7 +185,6 @@
               </td>
               <td>{{ formatFileSize(content.fileSizeMb) }}</td>
               <td>
-                <!-- Botones de orden -->
                 <button 
                   class="btn btn-sm btn-outline-secondary me-1"
                   (click)="moveUp(content)"
@@ -130,18 +200,19 @@
                   <i class="fas fa-arrow-down"></i>
                 </button>
 
-                <!-- Botones de acción -->
                 <button 
                   class="btn btn-sm btn-outline-info me-2"
                   (click)="viewContent(content)">
                   <i class="fas fa-eye"></i> Ver
                 </button>
-                <button 
+                <button *ngIf="authService.canEditModules()"
+
                   class="btn btn-sm btn-outline-primary me-2"
                   (click)="editContent(content)">
                   <i class="fas fa-edit"></i> Editar
                 </button>
-                <button 
+                <button *ngIf="authService.canDeleteModules()"
+
                   class="btn btn-sm btn-outline-danger"
                   (click)="deleteContent(content)">
                   <i class="fas fa-trash"></i> Eliminar

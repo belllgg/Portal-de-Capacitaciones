@@ -1,12 +1,11 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Administración de Cursos</h2>
-    <button class="btn btn-primary" routerLink="/courses/create">
+    <button *ngIf="authService.canCreateContent()" class="btn btn-primary" routerLink="/courses/create">
       <i class="fas fa-plus"></i> Nuevo Curso
     </button>
   </div>
 
-  <!-- Filtros -->
   <div class="card mb-4">
     <div class="card-body">
       <div class="row g-3">
@@ -26,7 +25,7 @@
             class="form-select"
             id="moduleFilter"
             [(ngModel)]="selectedModule"
-            (change)="onModuleFilterChange()">
+            (change)="onModuleFilterChange($event)">
             <option [ngValue]="null">Todos los módulos</option>
             <option *ngFor="let module of modules" [ngValue]="module.id">
               {{ module.name }}
@@ -39,9 +38,9 @@
             class="form-select"
             id="stateFilter"
             [(ngModel)]="selectedState"
-            (change)="onStateFilterChange()">
-            <option [ngValue]="null">Todos los estados</option>
-            <option *ngFor="let state of states" [ngValue]="state.id">
+            (change)="onStateFilterChange($event)">
+            <option [value]="null">Todos los estados</option>
+            <option *ngFor="let state of states" [value]="state.id">
               {{ state.name }}
             </option>
           </select>
@@ -58,7 +57,6 @@
     </div>
   </div>
 
-  <!-- Loading -->
   <div *ngIf="loading" class="text-center">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Cargando...</span>
@@ -70,7 +68,6 @@
     {{ error }}
   </div>
 
-  <!-- Tabla de Cursos -->
   <div *ngIf="!loading && !error" class="card">
     <div class="card-body">
       <div class="table-responsive">
@@ -88,7 +85,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let course of filteredCourses">
+            <tr 
+              *ngFor="let course of filteredCourses"
+              (click)="goToCourseChapters(course.id)"
+              style="cursor: pointer;"
+              class="hover-row">
               <td>{{ course.id }}</td>
               <td>
                 <div class="d-flex align-items-center">
@@ -113,9 +114,7 @@
               </td>
               <td>{{ course.instructorName || '-' }}</td>
               <td>
-                <span *ngIf="course.durationHours">
-                  {{ course.durationHours }}h
-                </span>
+                <span *ngIf="course.durationHours">{{ course.durationHours }}h</span>
                 <span *ngIf="!course.durationHours">-</span>
               </td>
               <td>
@@ -132,13 +131,31 @@
                 </span>
                 <span *ngIf="course.chaptersCount === undefined">-</span>
               </td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary me-2"
-                        (click)="editCourse(course)">
+
+              <td (click)="$event.stopPropagation()">
+                <button 
+                  class="btn btn-sm me-2"
+                  [ngClass]="{
+                    'btn-success': startedCourses.includes(course.id),
+                    'btn-outline-success': !startedCourses.includes(course.id)
+                  }"
+                  (click)="startCourse(course)"
+                  [disabled]="loading || startedCourses.includes(course.id)">
+                  <i class="fas fa-play"></i>
+                  {{ startedCourses.includes(course.id) ? 'Iniciado' : 'Iniciar' }}
+                </button>
+
+                <button 
+                  *ngIf="authService.canEditModules()"
+                  class="btn btn-sm btn-outline-primary me-2"
+                  (click)="editCourse(course)">
                   <i class="fas fa-edit"></i> Editar
                 </button>
-                <button class="btn btn-sm btn-outline-danger"
-                        (click)="deleteCourse(course)">
+
+                <button 
+                  *ngIf="authService.canDeleteModules()"
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="deleteCourse(course)">
                   <i class="fas fa-trash"></i> Eliminar
                 </button>
               </td>
@@ -146,6 +163,7 @@
           </tbody>
         </table>
       </div>
+
       <div *ngIf="filteredCourses.length === 0" class="text-center text-muted py-4">
         No hay cursos que coincidan con los filtros seleccionados
       </div>

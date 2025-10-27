@@ -14,9 +14,6 @@ export class ChapterUpdateDao {
   ) {}
 
 
-  /**
-   * Actualizar un capítulo existente
-   */
   async update(id: number, updateChapterDto: UpdateChapterDto): Promise<Chapter | null> {
     try {
       const result = await this.chapterRepository.update(id, updateChapterDto);
@@ -32,7 +29,6 @@ export class ChapterUpdateDao {
     } catch (error) {
       this.logger.error(`Error al actualizar capítulo en BD: ${error.message}`, error.stack);
       
-      // Manejo de errores de foreign key
       if (error.code === '23503') {
         throw new HttpException(
           'El estado especificado no existe',
@@ -48,9 +44,7 @@ export class ChapterUpdateDao {
   }
 
 
-  /**
-   * Cambiar el estado de un capítulo
-   */
+
   async changeState(id: number, stateId: number): Promise<Chapter | null> {
     try {
       await this.chapterRepository.update(id, { stateId });
@@ -76,12 +70,9 @@ export class ChapterUpdateDao {
     }
   }
 
-  /**
-   * Actualizar el order_index de múltiples capítulos (para reordenar)
-   */
+
   async updateOrderIndexes(updates: { id: number; orderIndex: number }[]): Promise<boolean> {
     try {
-      // Usar transacción para actualizar todos a la vez
       await this.chapterRepository.manager.transaction(async (manager) => {
         for (const update of updates) {
           await manager.update(Chapter, update.id, { orderIndex: update.orderIndex });

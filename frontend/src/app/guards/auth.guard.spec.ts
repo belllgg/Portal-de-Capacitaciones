@@ -1,17 +1,35 @@
 import { TestBed } from '@angular/core/testing';
-import { CanActivateFn } from '@angular/router';
+import { Router } from '@angular/router';
+import { AuthGuard } from './auth.guard';
+import { AuthService } from '../services/auth.service';
 
-import { authGuard } from './auth.guard';
-
-describe('authGuard', () => {
-  const executeGuard: CanActivateFn = (...guardParameters) => 
-      TestBed.runInInjectionContext(() => authGuard(...guardParameters));
+describe('AuthGuard', () => {
+  let guard: AuthGuard;
+  let authService: any;
+  let router: any;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    authService = { isLoggedIn: jasmine.createSpy().and.returnValue(true) };
+    router = { navigate: jasmine.createSpy() };
+
+    TestBed.configureTestingModule({
+      providers: [
+        AuthGuard,
+        { provide: AuthService, useValue: authService },
+        { provide: Router, useValue: router }
+      ]
+    });
+
+    guard = TestBed.inject(AuthGuard);
   });
 
-  it('should be created', () => {
-    expect(executeGuard).toBeTruthy();
+  it('permite acceso si está logueado', () => {
+    expect(guard.canActivate()).toBeTrue();
+  });
+
+  it('redirige al login si no está logueado', () => {
+    authService.isLoggedIn.and.returnValue(false);
+    expect(guard.canActivate()).toBeFalse();
+    expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });
 });

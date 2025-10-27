@@ -14,15 +14,11 @@ export class ContentDeleteService {
   ) {}
 
 
-  /**
-   * Eliminar un contenido permanentemente
-   */
   async delete(id: number): Promise<{ 
     success: boolean; 
     message: string 
   }> {
     try {
-      // Verificar que el contenido existe
       const exists = await this.contentConsultDao.existsById(id);
       
       if (!exists) {
@@ -32,7 +28,6 @@ export class ContentDeleteService {
         };
       }
 
-      // Eliminar el contenido
       const deleted = await this.ContentDeleteDao.delete(id);
 
       if (!deleted) {
@@ -52,15 +47,12 @@ export class ContentDeleteService {
     }
   }
 
-  /**
-   * Eliminar todos los contenidos de un capítulo
-   */
+
   async deleteByChapterId(chapterId: number): Promise<{ 
     success: boolean; 
     message: string 
   }> {
     try {
-      // Verificar que el capítulo existe
       const chapterExists = await this.chapterConsultDao.existsById(chapterId);
       
       if (!chapterExists) {
@@ -70,7 +62,6 @@ export class ContentDeleteService {
         };
       }
 
-      // Eliminar todos los contenidos
       await this.ContentDeleteDao.deleteByChapterId(chapterId);
 
       return {

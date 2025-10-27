@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
-import { ChapterService } from './chapter.service'; // ✅ Importar ChapterService
+import { ChapterService } from './chapter.service'; 
 
 export interface Course {
   id: number;
@@ -59,7 +59,7 @@ export class CourseService {
 
   constructor(
     private http: HttpClient,
-    private chapterService: ChapterService // ✅ Inyectar ChapterService
+    private chapterService: ChapterService 
   ) {}
 
   private getHeaders(): HttpHeaders {
@@ -70,7 +70,6 @@ export class CourseService {
     });
   }
 
-  // ✅ Obtener todos los cursos CON conteo de capítulos
   getAllCourses(): Observable<Course[]> {
     return this.http.get<{ success: boolean; message: string; data: Course[] }>(
       `${this.apiUrl}/consult-all`,
@@ -80,7 +79,6 @@ export class CourseService {
       switchMap((courses) => {
         if (!courses.length) return of(courses);
 
-        // Para cada curso, obtener los capítulos usando ChapterService
         const requests = courses.map((course) =>
           forkJoin({
             allChapters: this.chapterService.getChaptersByCourse(course.id).pipe(

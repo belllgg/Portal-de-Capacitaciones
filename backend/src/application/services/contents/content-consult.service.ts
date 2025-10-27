@@ -7,7 +7,6 @@ import { ChapterContent } from '../../../domain/contents/entity/content.entity';
 export class ContentConsultService {
   private readonly logger = new Logger(ContentConsultService.name);
 
-  // Mapeo de tipos a iconos/emojis
   private readonly contentTypeIcons = {
     'VIDEO': '🎥',
     'PDF': '📄',
@@ -20,9 +19,7 @@ export class ContentConsultService {
     private readonly contentConsultDao: ContentConsultDao
   ) {}
 
-  /**
-   * Obtener todos los contenidos de un capítulo
-   */
+
   async findByChapterId(chapterId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -42,9 +39,7 @@ export class ContentConsultService {
     }
   }
 
-  /**
-   * Obtener un contenido por ID
-   */
+
   async findById(id: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -71,9 +66,6 @@ export class ContentConsultService {
     }
   }
 
-  /**
-   * Obtener contenidos por tipo
-   */
   async findByContentTypeId(contentTypeId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -93,9 +85,7 @@ export class ContentConsultService {
     }
   }
 
-  /**
-   * Obtener todos los tipos de contenido
-   */
+
   async findAllContentTypes(): Promise<{ 
     success: boolean; 
     message: string; 
@@ -121,9 +111,7 @@ export class ContentConsultService {
     }
   }
 
-  /**
-   * Obtener estadísticas de contenidos de un capítulo
-   */
+
   async getChapterContentStats(chapterId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -144,7 +132,6 @@ export class ContentConsultService {
         totalSizeMb: parseFloat(totalSize.toFixed(2))
       };
 
-      // Mapear los resultados por tipo
       rawStats.forEach(stat => {
         const count = parseInt(stat.count);
         switch (parseInt(stat.contentTypeId)) {
@@ -167,9 +154,7 @@ export class ContentConsultService {
     }
   }
 
-  /**
-   * Obtener estadísticas de contenidos de un curso completo
-   */
+
   async getCourseContentStats(courseId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -188,7 +173,6 @@ export class ContentConsultService {
         totalSizeMb: 0
       };
 
-      // Mapear los resultados por tipo
       rawStats.forEach(stat => {
         const count = parseInt(stat.count);
         const size = parseFloat(stat.totalSize || 0);
@@ -218,9 +202,6 @@ export class ContentConsultService {
     }
   }
 
-  /**
-   * Mapear a DTO de respuesta completo
-   */
   private mapToResponseDto(content: ChapterContent): ContentResponseDto {
     return {
       id: content.id,
@@ -241,9 +222,7 @@ export class ContentConsultService {
     };
   }
 
-  /**
-   * Mapear a DTO de listado
-   */
+
   private mapToListItemDto(content: ChapterContent): ContentListItemDto {
     return {
       id: content.id,

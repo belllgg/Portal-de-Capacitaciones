@@ -15,13 +15,7 @@ export class ProgressMutationDao {
     private readonly chapterProgressRepository: Repository<UserChapterProgress>,
   ) {}
 
-  // ==========================================
-  // MUTACIONES DE PROGRESO DE CURSO
-  // ==========================================
 
-  /**
-   * Iniciar un curso (crear registro de progreso)
-   */
   async startCourse(userId: number, courseId: number): Promise<UserCourseProgress> {
     try {
       const progress = this.courseProgressRepository.create({
@@ -34,7 +28,6 @@ export class ProgressMutationDao {
     } catch (error) {
       this.logger.error(`Error al iniciar curso: ${error.message}`, error.stack);
       
-      // Error de duplicado (ya inició el curso)
       if (error.code === '23505') {
         throw new HttpException(
           'El usuario ya inició este curso',
@@ -49,9 +42,6 @@ export class ProgressMutationDao {
     }
   }
 
-  /**
-   * Actualizar porcentaje de progreso de un curso
-   */
   async updateCourseProgress(
     userId: number, 
     courseId: number, 
@@ -76,9 +66,7 @@ export class ProgressMutationDao {
     }
   }
 
-  /**
-   * Marcar un curso como completado
-   */
+ 
   async completeCourse(userId: number, courseId: number): Promise<UserCourseProgress | null> {
     try {
       await this.courseProgressRepository.update(
@@ -102,27 +90,18 @@ export class ProgressMutationDao {
     }
   }
 
-  // ==========================================
-  // MUTACIONES DE PROGRESO DE CAPÍTULO
-  // ==========================================
 
-  /**
-   * Marcar un capítulo como completado
-   */
   async completeChapter(userId: number, chapterId: number): Promise<UserChapterProgress> {
     try {
-      // Buscar si ya existe el registro
       let progress = await this.chapterProgressRepository.findOne({
         where: { userId, chapterId }
       });
 
       if (progress) {
-        // Si ya existe, actualizar
         progress.completed = true;
         progress.completedAt = new Date();
         return await this.chapterProgressRepository.save(progress);
       } else {
-        // Si no existe, crear nuevo
         progress = this.chapterProgressRepository.create({
           userId,
           chapterId,
@@ -148,12 +127,9 @@ export class ProgressMutationDao {
     }
   }
 
-  /**
-   * Desmarcar un capítulo como completado
-   */
+
   async uncompleteChapter(userId: number, chapterId: number): Promise<UserChapterProgress | null> {
   try {
-    // Primero verificar si existe el registro
     const existingProgress = await this.chapterProgressRepository.findOne({
       where: { userId, chapterId }
     });
@@ -166,11 +142,9 @@ export class ProgressMutationDao {
       );
     }
 
-    // Log antes de actualizar
     this.logger.log(`Desmarcando capítulo ${chapterId} para usuario ${userId}`);
     this.logger.log(`Estado antes: completed=${existingProgress.completed}`);
 
-    // Actualizar
     const updateResult = await this.chapterProgressRepository.update(
       { userId, chapterId },
       { 
@@ -181,7 +155,6 @@ export class ProgressMutationDao {
 
     this.logger.log(`Filas afectadas: ${updateResult.affected}`);
 
-    // Obtener el registro actualizado
     const updatedProgress = await this.chapterProgressRepository.findOne({
       where: { userId, chapterId }
     });
@@ -203,9 +176,7 @@ export class ProgressMutationDao {
   }
 }
 
-  /**
-   * Eliminar progreso de un curso (por si el usuario quiere reiniciarlo)
-   */
+
   async deleteCourseProgress(userId: number, courseId: number): Promise<boolean> {
     try {
       const result = await this.courseProgressRepository.delete({ userId, courseId });
@@ -219,9 +190,7 @@ export class ProgressMutationDao {
     }
   }
 
-  /**
-   * Eliminar progreso de un capítulo
-   */
+
   async deleteChapterProgress(userId: number, chapterId: number): Promise<boolean> {
     try {
       const result = await this.chapterProgressRepository.delete({ userId, chapterId });

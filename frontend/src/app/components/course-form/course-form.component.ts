@@ -20,8 +20,7 @@ export class CourseFormComponent implements OnInit {
   courseId: number | null = null;
   modules: Module[] = [];
 
-  // Estados disponibles
-// Estados disponibles — deben coincidir con la tabla en la BD
+  
 states = [
   { id: 1, name: 'Borrador' },   // DRAFT
   { id: 2, name: 'Activo' },     // ACTIVE
@@ -60,7 +59,7 @@ states = [
       instructorName: ['', Validators.maxLength(100)],
       thumbnailUrl: [''],
       durationHours: [null, [Validators.min(0.1)]],
-      stateId: [3] // Por defecto Borrador
+      stateId: [3] 
     });
   }
 
@@ -106,11 +105,9 @@ states = [
     this.loading = true;
     this.error = '';
     const formData = this.courseForm.value;
-// Convertir valores string a número
 formData.moduleId = Number(formData.moduleId);
 formData.stateId = Number(formData.stateId);
 
-    // Limpiar campos opcionales vacíos
     const cleanedData = {
       ...formData,
       description: formData.description || undefined,
@@ -162,7 +159,6 @@ if (this.isEditMode && this.courseId) {
     });
   }
 
-  // Helpers para validación
   get title() { return this.courseForm.get('title'); }
   get moduleId() { return this.courseForm.get('moduleId'); }
   get instructorName() { return this.courseForm.get('instructorName'); }

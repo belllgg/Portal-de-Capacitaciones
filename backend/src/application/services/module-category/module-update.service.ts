@@ -13,16 +13,12 @@ export class ModuleUpdateService {
     private readonly ModuleUpdateDao: ModuleUpdateDao
   ) {}
 
-  /**
-   * Actualizar un módulo existente (solo ADMIN)
-   */
   async update(id: number, updateModuleDto: UpdateModuleDto): Promise<{ 
     success: boolean; 
     message: string; 
     data?: ModuleResponseDto 
   }> {
     try {
-      // Verificar que el módulo existe
       const exists = await this.moduleConsultDao.existsById(id);
       
       if (!exists) {
@@ -32,7 +28,6 @@ export class ModuleUpdateService {
         };
       }
 
-      // Si se está actualizando el nombre, validar que no exista otro con ese nombre
       if (updateModuleDto.name) {
         const existingModule = await this.moduleConsultDao.findByName(updateModuleDto.name);
         
@@ -44,7 +39,6 @@ export class ModuleUpdateService {
         }
       }
 
-      // Actualizar el módulo
       const module = await this.ModuleUpdateDao.update(id, updateModuleDto);
 
       if (!module) {
@@ -65,9 +59,7 @@ export class ModuleUpdateService {
     }
   }
 
-  /**
-   * Mapear entidad a DTO de respuesta
-   */
+
   private mapToResponseDto(module: Modules): ModuleResponseDto {
     return {
       id: module.id,

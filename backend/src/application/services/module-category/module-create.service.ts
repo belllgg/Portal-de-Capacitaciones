@@ -13,16 +13,13 @@ export class ModuleCreateService {
     private readonly ModuleCreateDao: ModuleCreateDao
   ) {}
 
-  /**
-   * Crear un nuevo módulo (solo ADMIN)
-   */
+  
   async create(createModuleDto: CreateModuleDto): Promise<{ 
     success: boolean; 
     message: string; 
     data?: ModuleResponseDto 
   }> {
     try {
-      // Validar que no exista un módulo con ese nombre
       const existingModule = await this.moduleConsultDao.findByName(createModuleDto.name);
       
       if (existingModule) {
@@ -32,7 +29,6 @@ export class ModuleCreateService {
         );
       }
 
-      // Crear el módulo
       const module = await this.ModuleCreateDao.create(createModuleDto);
 
       return {
@@ -46,9 +42,7 @@ export class ModuleCreateService {
     }
   }
 
-  /**
-   * Mapear entidad a DTO de respuesta
-   */
+
   private mapToResponseDto(module: Modules): ModuleResponseDto {
     return {
       id: module.id,

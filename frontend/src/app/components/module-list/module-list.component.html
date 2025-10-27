@@ -31,7 +31,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let module of modules">
+            <tr *ngFor="let module of modules" 
+                class="clickable-row" 
+                (click)="viewCourses(module.id)">
               <td>{{ module.id }}</td>
               <td>
                 <i [class]="module.icon || 'fas fa-folder'" class="module-icon"></i>
@@ -46,7 +48,7 @@
                   {{ module.activeCoursesCount }} activos
                 </span>
               </td>
-              <td>
+              <td (click)="$event.stopPropagation()">
                 <button class="btn btn-sm btn-outline-primary me-2" 
                         (click)="editModule(module)">
                   <i class="fas fa-edit"></i> Editar

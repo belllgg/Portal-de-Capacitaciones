@@ -12,9 +12,7 @@ export class ChapterConsultDao {
     private readonly chapterRepository: Repository<Chapter>,
   ) {}
 
-  /**
-   * Obtener todos los capítulos de un curso
-   */
+
   async findByCourseId(courseId: number): Promise<Chapter[]> {
     try {
       return await this.chapterRepository.find({
@@ -31,15 +29,13 @@ export class ChapterConsultDao {
     }
   }
 
-  /**
-   * Obtener solo capítulos PUBLICADOS de un curso
-   */
+
   async findPublishedByCourseId(courseId: number): Promise<Chapter[]> {
     try {
       return await this.chapterRepository.find({
         where: { 
           courseId,
-          stateId: 2 // PUBLISHED
+          stateId: 2 
         },
         relations: ['state'],
         order: { orderIndex: 'ASC' }
@@ -53,9 +49,7 @@ export class ChapterConsultDao {
     }
   }
 
-  /**
-   * Buscar capítulo por ID
-   */
+
   async findById(id: number): Promise<Chapter | null> {
     try {
       return await this.chapterRepository.findOne({ 
@@ -86,9 +80,7 @@ export class ChapterConsultDao {
     }
   }
 
-  /**
-   * Verificar si existe un capítulo por ID
-   */
+
   async existsById(id: number): Promise<boolean> {
     try {
       const count = await this.chapterRepository.count({ where: { id } });
@@ -102,9 +94,7 @@ export class ChapterConsultDao {
     }
   }
 
-  /**
-   * Contar capítulos de un curso
-   */
+
   async countByCourseId(courseId: number): Promise<number> {
     try {
       return await this.chapterRepository.count({ 
@@ -119,9 +109,7 @@ export class ChapterConsultDao {
     }
   }
 
-  /**
-   * Contar capítulos publicados de un curso
-   */
+
   async countPublishedByCourseId(courseId: number): Promise<number> {
     try {
       return await this.chapterRepository.count({ 
@@ -139,9 +127,7 @@ export class ChapterConsultDao {
     }
   }
 
-  /**
-   * Buscar capítulos por estado
-   */
+
   async findByStateId(stateId: number): Promise<Chapter[]> {
     try {
       return await this.chapterRepository.find({
@@ -158,9 +144,7 @@ export class ChapterConsultDao {
     }
   }
 
-  /**
-   * Obtener el último order_index de un curso
-   */
+
   async getLastOrderIndexByCourseId(courseId: number): Promise<number> {
     try {
       const result = await this.chapterRepository
@@ -179,9 +163,7 @@ export class ChapterConsultDao {
     }
   }
 
-  /**
-   * Verificar si existe un capítulo con ese order_index en el curso
-   */
+
   async existsByOrderIndex(courseId: number, orderIndex: number, excludeId?: number): Promise<boolean> {
     try {
       const query = this.chapterRepository
@@ -204,9 +186,7 @@ export class ChapterConsultDao {
     }
   }
 
-  /**
-   * Calcular duración total de los capítulos de un curso
-   */
+
   async getTotalDurationByCourseId(courseId: number): Promise<number> {
     try {
       const result = await this.chapterRepository

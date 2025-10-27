@@ -12,15 +12,11 @@ export class ChapterDeleteService {
   ) {}
 
 
-  /**
-   * Eliminar un capítulo (soft delete - cambiar a ARCHIVED)
-   */
   async softDelete(id: number): Promise<{ 
     success: boolean; 
     message: string 
   }> {
     try {
-      // Verificar que el capítulo existe
       const exists = await this.chapterConsultDao.existsById(id);
       
       if (!exists) {
@@ -30,7 +26,6 @@ export class ChapterDeleteService {
         };
       }
 
-      // Archivar el capítulo
       await this.ChapterDeleteDao.softDelete(id);
 
       return {
@@ -43,15 +38,11 @@ export class ChapterDeleteService {
     }
   }
 
-  /**
-   * Eliminar un capítulo permanentemente
-   */
   async delete(id: number): Promise<{ 
     success: boolean; 
     message: string 
   }> {
     try {
-      // Verificar que el capítulo existe
       const exists = await this.chapterConsultDao.existsById(id);
       
       if (!exists) {
@@ -61,7 +52,6 @@ export class ChapterDeleteService {
         };
       }
 
-      // Eliminar el capítulo
       const deleted = await this.ChapterDeleteDao.delete(id);
 
       if (!deleted) {

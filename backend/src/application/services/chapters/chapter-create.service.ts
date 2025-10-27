@@ -15,16 +15,13 @@ export class ChapterCreateService {
     private readonly courseConsultDao: CourseConsultDao
   ) {}
 
-  /**
-   * Crear un nuevo capítulo
-   */
+
   async create(createChapterDto: CreateChapterDto): Promise<{ 
     success: boolean; 
     message: string; 
     data?: ChapterResponseDto 
   }> {
     try {
-      // Validar que el curso existe
       const courseExists = await this.courseConsultDao.existsById(createChapterDto.courseId);
       
       if (!courseExists) {
@@ -34,7 +31,6 @@ export class ChapterCreateService {
         );
       }
 
-      // Validar que el order_index no esté duplicado
       const orderExists = await this.chapterConsultDao.existsByOrderIndex(
         createChapterDto.courseId, 
         createChapterDto.orderIndex
@@ -47,7 +43,6 @@ export class ChapterCreateService {
         );
       }
 
-      // Crear el capítulo
       const chapter = await this.ChapterCreateDao.create(createChapterDto);
 
       return {
@@ -61,9 +56,7 @@ export class ChapterCreateService {
     }
   }
 
-  /**
-   * Crear capítulo con order_index automático (al final)
-   */
+
   async createAutoOrdered(
     courseId: number,
     title: string,
@@ -75,7 +68,6 @@ export class ChapterCreateService {
     data?: ChapterResponseDto 
   }> {
     try {
-      // Obtener el último order_index del curso
       const lastOrder = await this.chapterConsultDao.getLastOrderIndexByCourseId(courseId);
       
       const createDto: CreateChapterDto = {
@@ -94,9 +86,6 @@ export class ChapterCreateService {
   }
 
 
-  /**
-   * Mapear a DTO de respuesta
-   */
   private mapToResponseDto(chapter: Chapter): ChapterResponseDto {
     return {
       id: chapter.id,

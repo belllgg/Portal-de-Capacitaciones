@@ -13,7 +13,7 @@ import { CourseModule } from '../../courses/module/course.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([BadgeType, UserBadge]),
-    forwardRef(() => ProgressModule), // ← USAR forwardRef AQUÍ TAMBIÉN
+    forwardRef(() => ProgressModule), 
     CourseModule
   ],
   controllers: [BadgesController],

@@ -1,4 +1,3 @@
-// src/app/interfaces/user.interface.ts
 export interface User {
   id?: number;
   email: string;

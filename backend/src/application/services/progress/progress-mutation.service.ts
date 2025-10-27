@@ -18,16 +18,13 @@ export class ProgressMutationService {
 
   ) {}
 
-  /**
-   * Iniciar un curso (primera vez que el usuario accede)
-   */
+
   async startCourse(userId: number, courseId: number): Promise<{ 
     success: boolean; 
     message: string; 
     data?: any 
   }> {
     try {
-      // Validar que el curso existe
       const courseExists = await this.courseConsultDao.existsById(courseId);
       
       if (!courseExists) {
@@ -37,7 +34,6 @@ export class ProgressMutationService {
         );
       }
 
-      // Verificar si ya inició el curso
       const existing = await this.progressConsultDao.findCourseProgress(userId, courseId);
       
       if (existing) {
@@ -47,7 +43,6 @@ export class ProgressMutationService {
         };
       }
 
-      // Iniciar el curso
       await this.progressMutationDao.startCourse(userId, courseId);
 
       return {
@@ -60,16 +55,13 @@ export class ProgressMutationService {
     }
   }
 
-  /**
-   * Marcar un capítulo como completado
-   */
+
   async completeChapter(userId: number, chapterId: number): Promise<{ 
     success: boolean; 
     message: string; 
     data?: any 
   }> {
     try {
-      // Validar que el capítulo existe
       const chapter = await this.chapterConsultDao.findById(chapterId);
       
       if (!chapter) {
@@ -81,17 +73,14 @@ export class ProgressMutationService {
 
       const courseId = chapter.courseId;
 
-      // Verificar si el usuario ya inició el curso, si no, iniciarlo
       let courseProgress = await this.progressConsultDao.findCourseProgress(userId, courseId);
       
       if (!courseProgress) {
         await this.progressMutationDao.startCourse(userId, courseId);
       }
 
-      // Marcar capítulo como completado
       await this.progressMutationDao.completeChapter(userId, chapterId);
 
-      // Recalcular progreso del curso
       await this.recalculateCourseProgress(userId, courseId);
 
       return {
@@ -104,15 +93,12 @@ export class ProgressMutationService {
     }
   }
 
-  /**
-   * Desmarcar un capítulo como completado
-   */
+
   async uncompleteChapter(userId: number, chapterId: number): Promise<{ 
     success: boolean; 
     message: string 
   }> {
     try {
-      // Validar que el capítulo existe
       const chapter = await this.chapterConsultDao.findById(chapterId);
       
       if (!chapter) {
@@ -124,16 +110,12 @@ export class ProgressMutationService {
 
       const courseId = chapter.courseId;
 
-      // Desmarcar capítulo
       await this.progressMutationDao.uncompleteChapter(userId, chapterId);
 
-      // Recalcular progreso del curso
       await this.recalculateCourseProgress(userId, courseId);
 
-    // 👇 AGREGAR ESTO: Verificar si completó el curso para otorgar insignias
     const courseProgress = await this.progressConsultDao.findCourseProgress(userId, courseId);
     if (courseProgress && courseProgress.completedAt) {
-      // Importar BadgeAwardService en el constructor
       await this.badgeAwardService.checkAndAwardBadgesForCourseCompletion(userId, courseId);
     }
 
@@ -147,15 +129,11 @@ export class ProgressMutationService {
   }
 }
 
-  /**
-   * Reiniciar progreso de un curso
-   */
   async resetCourseProgress(userId: number, courseId: number): Promise<{ 
     success: boolean; 
     message: string 
   }> {
     try {
-      // Validar que el curso existe
       const courseExists = await this.courseConsultDao.existsById(courseId);
       
       if (!courseExists) {
@@ -165,10 +143,8 @@ export class ProgressMutationService {
         );
       }
 
-      // Eliminar progreso del curso
       await this.progressMutationDao.deleteCourseProgress(userId, courseId);
 
-      // Eliminar progreso de todos los capítulos del curso
       const chapters = await this.chapterConsultDao.findByCourseId(courseId);
       
       for (const chapter of chapters) {
@@ -185,12 +161,9 @@ export class ProgressMutationService {
     }
   }
 
-  /**
-   * Recalcular el progreso de un curso basado en capítulos completados
-   */
+
   private async recalculateCourseProgress(userId: number, courseId: number): Promise<void> {
     try {
-      // Contar capítulos totales y completados
       const totalChapters = await this.chapterConsultDao.countPublishedByCourseId(courseId);
       const completedChapters = await this.progressConsultDao.countCompletedChaptersByCourse(userId, courseId);
 
@@ -198,19 +171,15 @@ export class ProgressMutationService {
         return;
       }
 
-      // Calcular porcentaje
       const progressPercentage = (completedChapters / totalChapters) * 100;
 
-      // Actualizar progreso del curso
       await this.progressMutationDao.updateCourseProgress(userId, courseId, progressPercentage);
 
-      // Si completó todos los capítulos, marcar curso como completado
       if (completedChapters === totalChapters) {
         await this.progressMutationDao.completeCourse(userId, courseId);
       }
     } catch (error) {
       this.logger.error(`Error al recalcular progreso: ${error.message}`, error.stack);
-      // No lanzar error para no interrumpir el flujo principal
     }
   }
 }

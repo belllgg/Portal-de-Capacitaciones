@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { ProgressConsultDao } from '../../../domain/progress/dao/progress-consult.dao';
 import { ChapterConsultDao } from '../../../domain/chapters/dao/chapter-consult.dao';
-import { CourseProgressDto,CourseProgressDetailDto,ChapterProgressDto,UserProgressSummaryDto,UserDashboardStatsDto,UserHistoryItemDto,RecentActivityDto,ModuleStatsDto,CourseAnalyticsDto,UserRankingDto} from '../../../domain/progress/dto/progress.dto';
+import { CourseProgressDto,ModuleProgressDto,ModuleCompletedDto,CourseProgressDetailDto,ChapterProgressDto,UserProgressSummaryDto,UserDashboardStatsDto,UserHistoryItemDto,RecentActivityDto,ModuleStatsDto,CourseAnalyticsDto,UserRankingDto} from '../../../domain/progress/dto/progress.dto';
 import { UserCourseProgress,UserChapterProgress } from '../../../domain/progress/entity/progress.entity';
 
 @Injectable()
@@ -13,9 +13,7 @@ export class ProgressConsultService {
     private readonly chapterConsultDao: ChapterConsultDao
   ) {}
 
-  /**
-   * Obtener progreso completo de un usuario (resumen general)
-   */
+ 
   async getUserProgressSummary(userId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -30,7 +28,6 @@ export class ProgressConsultService {
       const inProgress = await this.progressConsultDao.findUserCoursesInProgress(userId);
       const completed = await this.progressConsultDao.findUserCoursesCompleted(userId);
 
-      // Obtener total de capítulos para cada curso en progreso
       const coursesInProgressWithStats = await Promise.all(
         inProgress.map(async (progress) => {
           const totalChapters = await this.chapterConsultDao.countByCourseId(progress.courseId);
@@ -73,9 +70,7 @@ export class ProgressConsultService {
     }
   }
 
-  /**
-   * Obtener progreso detallado de un curso (con capítulos)
-   */
+
   async getCourseProgressDetail(userId: number, courseId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -94,13 +89,10 @@ export class ProgressConsultService {
       const totalChapters = await this.chapterConsultDao.countByCourseId(courseId);
       const completedChapters = await this.progressConsultDao.countCompletedChaptersByCourse(userId, courseId);
       
-      // Obtener todos los capítulos del curso
       const allChapters = await this.chapterConsultDao.findByCourseId(courseId);
       
-      // Obtener progreso de cada capítulo
       const chapterProgressList = await this.progressConsultDao.findUserChapterProgressByCourse(userId, courseId);
       
-      // Mapear progreso de capítulos
       const chaptersWithProgress: ChapterProgressDto[] = allChapters.map(chapter => {
         const progress = chapterProgressList.find(p => p.chapterId === chapter.id);
         
@@ -130,9 +122,7 @@ export class ProgressConsultService {
     }
   }
 
-  /**
-   * Obtener cursos en progreso de un usuario
-   */
+
   async getCoursesInProgress(userId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -164,9 +154,7 @@ export class ProgressConsultService {
     }
   }
 
-  /**
-   * Obtener cursos completados de un usuario (historial)
-   */
+
   async getCoursesCompleted(userId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -201,9 +189,7 @@ export class ProgressConsultService {
     }
   }
 
-  /**
-   * Obtener estadísticas para el dashboard del usuario
-   */
+
   async getDashboardStats(userId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -215,7 +201,6 @@ export class ProgressConsultService {
       const chaptersCompleted = await this.progressConsultDao.countUserChaptersCompleted(userId);
       const hoursStudied = await this.progressConsultDao.calculateTotalHoursStudied(userId);
       
-      // Actividad reciente
       const recentActivityRaw = await this.progressConsultDao.findRecentActivity(userId, 5);
       const recentActivity: RecentActivityDto[] = recentActivityRaw.map(activity => ({
         type: 'chapter_completed',
@@ -225,7 +210,6 @@ export class ProgressConsultService {
         icon: '✅'
       }));
 
-      // Progreso por módulo
       const moduleProgressRaw = await this.progressConsultDao.findProgressByModule(userId);
       const coursesByModule: ModuleStatsDto[] = moduleProgressRaw.map(module => ({
         moduleId: parseInt(module.moduleId),
@@ -256,9 +240,6 @@ export class ProgressConsultService {
     }
   }
 
-  /**
-   * Obtener analytics de un curso (para admin)
-   */
   async getCourseAnalytics(courseId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -287,9 +268,7 @@ export class ProgressConsultService {
     }
   }
 
-  /**
-   * Obtener ranking de usuarios (para admin)
-   */
+
   async getUserRanking(limit: number = 10): Promise<{ 
     success: boolean; 
     message: string; 
@@ -326,9 +305,7 @@ export class ProgressConsultService {
     }
   }
 
-  /**
-   * Mapear a DTO de progreso de curso
-   */
+
   private mapToCourseProgressDto(
     progress: UserCourseProgress, 
     totalChapters: number, 
@@ -350,4 +327,78 @@ export class ProgressConsultService {
       isCompleted: progress.completedAt !== null
     };
   }
+
+
+async getModulesCompleted(userId: number): Promise<{ 
+  success: boolean; 
+  message: string; 
+  data?: ModuleCompletedDto[] 
+}> {
+  try {
+    const modulesCompleted = await this.progressConsultDao.findUserModulesCompleted(userId);
+
+    const modules: ModuleCompletedDto[] = modulesCompleted.map(module => ({
+      moduleId: parseInt(module.moduleId),
+      moduleName: module.moduleName,
+      moduleIcon: module.moduleIcon,
+      moduleDescription: module.moduleDescription,
+      totalCourses: parseInt(module.totalCourses || module.completedCourses),
+      completedAt: module.completedAt,
+      badgeTypeId: 1,
+      badgeName: 'Módulo Maestro',
+      badgeIconUrl: '/assets/badges/gold-module.png' 
+    }));
+
+    return {
+      success: true,
+      message: 'Módulos completados obtenidos',
+      data: modules
+    };
+  } catch (error) {
+    this.logger.error(`Error al obtener módulos completados: ${error.message}`, error.stack);
+    throw error;
+  }
+}
+
+async getModuleProgress(userId: number): Promise<{ 
+  success: boolean; 
+  message: string; 
+  data?: ModuleProgressDto[] 
+}> {
+  try {
+    const modulesRaw = await this.progressConsultDao.findDetailedModuleProgress(userId);
+
+    const modules: ModuleProgressDto[] = modulesRaw.map(module => {
+      const totalCourses = parseInt(module.totalCourses);
+      const completedCourses = parseInt(module.completedCourses);
+      const progressPercentage = totalCourses > 0 
+        ? Math.round((completedCourses / totalCourses) * 100) 
+        : 0;
+
+      return {
+        moduleId: parseInt(module.moduleId),
+        moduleName: module.moduleName,
+        moduleDescription: module.moduleDescription,
+        moduleIcon: module.moduleIcon,
+        totalCourses,
+        completedCourses,
+        inProgressCourses: parseInt(module.inProgressCourses),
+        progressPercentage,
+        status: module.status,
+        startedAt: module.startedAt,
+        lastCompletedAt: module.lastCompletedAt,
+        hasBadge: module.status === 'completed' 
+      };
+    });
+
+    return {
+      success: true,
+      message: 'Progreso de módulos obtenido',
+      data: modules
+    };
+  } catch (error) {
+    this.logger.error(`Error al obtener progreso de módulos: ${error.message}`, error.stack);
+    throw error;
+  }
+}
 }

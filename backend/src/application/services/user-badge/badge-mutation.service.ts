@@ -13,20 +13,13 @@ export class BadgeMutationService {
     private readonly badgeMutationDao: BadgeMutationDao
   ) {}
 
-  // ==========================================
-  // GESTIÓN DE BADGE TYPES (ADMIN)
-  // ==========================================
 
-  /**
-   * Crear un nuevo tipo de insignia (solo ADMIN)
-   */
   async createBadgeType(createBadgeTypeDto: CreateBadgeTypeDto): Promise<{ 
     success: boolean; 
     message: string; 
     data?: BadgeTypeResponseDto 
   }> {
     try {
-      // Validar que no exista ya
       const exists = await this.badgeConsultDao.existsBadgeTypeByName(createBadgeTypeDto.name);
       
       if (exists) {
@@ -49,9 +42,6 @@ export class BadgeMutationService {
     }
   }
 
-  /**
-   * Actualizar un tipo de insignia (solo ADMIN)
-   */
   async updateBadgeType(
     id: number, 
     updateBadgeTypeDto: UpdateBadgeTypeDto
@@ -81,9 +71,6 @@ export class BadgeMutationService {
     }
   }
 
-  /**
-   * Eliminar un tipo de insignia (solo ADMIN)
-   */
   async deleteBadgeType(id: number): Promise<{ 
     success: boolean; 
     message: string 
@@ -108,13 +95,6 @@ export class BadgeMutationService {
     }
   }
 
-  // ==========================================
-  // OTORGAR Y REVOCAR INSIGNIAS
-  // ==========================================
-
-  /**
-   * Otorgar una insignia a un usuario manualmente (solo ADMIN)
-   */
   async awardBadgeManually(
     userId: number, 
     badgeTypeId: number, 
@@ -125,7 +105,6 @@ export class BadgeMutationService {
     data?: UserBadgeDto 
   }> {
     try {
-      // Verificar si ya tiene la insignia
       const hasIt = await this.badgeConsultDao.userHasBadge(userId, badgeTypeId, courseId);
       
       if (hasIt) {
@@ -153,9 +132,7 @@ export class BadgeMutationService {
     }
   }
 
-  /**
-   * Revocar una insignia específica (solo ADMIN)
-   */
+
   async revokeBadge(userBadgeId: number): Promise<{ 
     success: boolean; 
     message: string 
@@ -180,9 +157,7 @@ export class BadgeMutationService {
     }
   }
 
-  /**
-   * Revocar todas las insignias de un usuario (solo ADMIN)
-   */
+ 
   async revokeAllUserBadges(userId: number): Promise<{ 
     success: boolean; 
     message: string 
@@ -207,9 +182,6 @@ export class BadgeMutationService {
     }
   }
 
-  /**
-   * Mapear BadgeType a DTO
-   */
   private mapToBadgeTypeDto(badgeType: BadgeType): BadgeTypeResponseDto {
     return {
       id: badgeType.id,

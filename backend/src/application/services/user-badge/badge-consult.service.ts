@@ -11,9 +11,7 @@ export class BadgeConsultService {
     private readonly badgeConsultDao: BadgeConsultDao
   ) {}
 
-  /**
-   * Obtener todos los tipos de insignias
-   */
+
   async findAllBadgeTypes(): Promise<{ 
     success: boolean; 
     message: string; 
@@ -33,9 +31,7 @@ export class BadgeConsultService {
     }
   }
 
-  /**
-   * Obtener un tipo de insignia por ID
-   */
+ 
   async findBadgeTypeById(id: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -62,9 +58,7 @@ export class BadgeConsultService {
     }
   }
 
-  /**
-   * Obtener todos los tipos de insignias con estadísticas
-   */
+
   async findAllBadgeTypesWithStats(): Promise<{ 
     success: boolean; 
     message: string; 
@@ -96,9 +90,7 @@ export class BadgeConsultService {
     }
   }
 
-  /**
-   * Obtener todas las insignias de un usuario
-   */
+
   async findUserBadges(userId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -132,9 +124,6 @@ export class BadgeConsultService {
     }
   }
 
-  /**
-   * Obtener insignias recientes de un usuario
-   */
   async findRecentUserBadges(userId: number, limit: number = 5): Promise<{ 
     success: boolean; 
     message: string; 
@@ -154,9 +143,7 @@ export class BadgeConsultService {
     }
   }
 
-  /**
-   * Obtener ranking de usuarios por insignias
-   */
+
   async getBadgeRanking(limit: number = 10): Promise<{ 
     success: boolean; 
     message: string; 
@@ -184,9 +171,6 @@ export class BadgeConsultService {
     }
   }
 
-  /**
-   * Obtener insignias otorgadas para un curso
-   */
   async findBadgesByCourse(courseId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -221,9 +205,6 @@ export class BadgeConsultService {
     }
   }
 
-  /**
-   * Obtener usuarios que tienen una insignia específica
-   */
   async findUsersWithBadge(badgeTypeId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -251,9 +232,7 @@ export class BadgeConsultService {
     }
   }
 
-  /**
-   * Mapear BadgeType a DTO
-   */
+ 
   private mapToBadgeTypeDto(badgeType: BadgeType): BadgeTypeResponseDto {
     return {
       id: badgeType.id,
@@ -264,9 +243,7 @@ export class BadgeConsultService {
     };
   }
 
-  /**
-   * Mapear UserBadge a DTO
-   */
+
   private mapToUserBadgeDto(userBadge: UserBadge): UserBadgeDto {
     return {
       id: userBadge.id,

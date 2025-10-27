@@ -1,4 +1,3 @@
-// src/app/app.routes.ts - CON MÓDULO DE PROGRESO
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { UserListComponent } from './components/user-list/user-list.component';
@@ -14,28 +13,21 @@ import { ContentFormComponent } from './components/content-form/content-form.com
 import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
-
-// Importar componentes de progreso
+import { ModulesProgressComponent } from './components/module-progress/modules-progress.component';
 import { CoursesCompletedComponent } from './components/courses-completed/courses-completed.component';
 import { CourseProgressDetailComponent } from './components/course-progress-detail/course-progress-detail.component';
 
 export const routes: Routes = [
-  // ✅ Ruta por defecto SIN protección - debe ir PRIMERO
   { path: '', component: LoginComponent },
   
-  // ✅ Login SIN protección
   { path: 'login', component: LoginComponent },
   
-  // Dashboard - accesible para todos los usuarios autenticados
   { 
     path: 'dashboard', 
     component: DashboardComponent,
     canActivate: [AuthGuard]
   },
   
-  // ==========================================
-  // RUTAS DE PROGRESO - Todos los usuarios autenticados
-  // ==========================================
 
   { 
     path: 'progress/completed', 
@@ -54,10 +46,7 @@ export const routes: Routes = [
     redirectTo: 'progress/dashboard',
     pathMatch: 'full'
   },
-  
-  // ==========================================
-  // Rutas de usuarios - SOLO ADMIN
-  // ==========================================
+
   { 
     path: 'users', 
     component: UserListComponent,
@@ -76,15 +65,12 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ADMIN'] }
   },
-  
-  // ==========================================
-  // Rutas de módulos - ADMIN y COLLABORATOR
-  // ==========================================
+
   { 
     path: 'modules', 
     component: ModuleListComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['ADMIN', 'COLLABORATOR'] }
+    data: { roles: ['ADMIN'] }
   },
   { 
     path: 'modules/create', 
@@ -98,10 +84,13 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ADMIN'] }
   },
-  
-  // ==========================================
-  // Rutas de cursos - ADMIN y COLLABORATOR
-  // ==========================================
+{
+    path: 'progress/modules',
+    component: ModulesProgressComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ADMIN', 'COLLABORATOR'] }
+
+  },
   { 
     path: 'courses', 
     component: CourseListComponent,
@@ -120,10 +109,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ADMIN', 'COLLABORATOR'] }
   },
-  
-  // ==========================================
-  // Rutas de capítulos - ADMIN y COLLABORATOR
-  // ==========================================
+
   { 
     path: 'chapters', 
     component: ChapterListComponent,
@@ -143,9 +129,7 @@ export const routes: Routes = [
     data: { roles: ['ADMIN', 'COLLABORATOR'] }
   },
   
-  // ==========================================
-  // Rutas de contenidos - ADMIN y COLLABORATOR
-  // ==========================================
+
   { 
     path: 'contents', 
     component: ContentListComponent,
@@ -165,6 +149,5 @@ export const routes: Routes = [
     data: { roles: ['ADMIN', 'COLLABORATOR'] }
   },
   
-  // ✅ Redirección para rutas no encontradas - SIN protección
   { path: '**', redirectTo: '' }
 ];

@@ -24,7 +24,6 @@ export class ContentFormComponent implements OnInit {
   contentTypes: ContentType[] = [];
   preselectedChapterId: number | null = null;
   
-  // Iconos por tipo de contenido
   contentTypeIcons: { [key: number]: string } = {
     1: 'fas fa-video',
     2: 'fas fa-file-pdf',
@@ -48,7 +47,6 @@ export class ContentFormComponent implements OnInit {
     this.loadCourses();
     this.loadContentTypes();
     
-    // Verificar si viene un chapterId preseleccionado
     this.route.queryParams.subscribe(params => {
       if (params['chapterId']) {
         this.preselectedChapterId = +params['chapterId'];
@@ -133,7 +131,6 @@ export class ContentFormComponent implements OnInit {
     if (this.contentId) {
       this.contentService.getContentById(this.contentId).subscribe({
         next: (content: Content) => {
-          // Cargar primero el curso y luego los capítulos
           if (content.chapter) {
             this.contentForm.patchValue({ courseId: content.chapter.courseId });
             this.onCourseChange();
@@ -170,7 +167,6 @@ export class ContentFormComponent implements OnInit {
     this.error = '';
     const formData = this.contentForm.value;
 
-    // Limpiar campos opcionales vacíos y asegurar tipos correctos
     const cleanedData = {
       chapterId: Number(formData.chapterId),
       contentTypeId: Number(formData.contentTypeId),
@@ -203,7 +199,6 @@ export class ContentFormComponent implements OnInit {
         }
       });
     } else {
-      // Asegurar que el DTO de creación incluya todos los campos requeridos
       const createData: CreateContentDto = {
         chapterId: cleanedData.chapterId,
         contentTypeId: cleanedData.contentTypeId,
@@ -235,7 +230,6 @@ export class ContentFormComponent implements OnInit {
     });
   }
 
-  // Helpers para validación
   get courseId() { return this.contentForm.get('courseId'); }
   get chapterId() { return this.contentForm.get('chapterId'); }
   get contentTypeId() { return this.contentForm.get('contentTypeId'); }

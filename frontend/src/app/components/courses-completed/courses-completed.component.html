@@ -1,18 +1,48 @@
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h2>
-        <i class="fas fa-trophy text-warning me-2"></i>
-        Cursos Completados
+        <i class="fas fa-chart-line text-primary me-2"></i>
+        🏅Mis Insignias🏅
       </h2>
-      <p class="text-muted mb-0">Tu historial de logros</p>
+      <p class="text-muted mb-0">Visualiza tu avance en todos los módulos disponibles</p>
     </div>
-    <button class="btn btn-outline-primary" routerLink="/progress/dashboard">
-      <i class="fas fa-chart-line"></i> Dashboard
-    </button>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-warning" routerLink="/progress/modules">
+        <i class="fas fa-trophy"></i> 📈Mi Progreso
+      </button>
+      <button class="btn btn-outline-primary" routerLink="/dashboard">
+        <i class="fas fa-tachometer-alt"></i> Ver Modulos
+      </button>
+    </div>
   </div>
 
-  <!-- Filtros y Ordenamiento -->
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <a 
+        class="nav-link" 
+        [class.active]="activeTab === 'courses'"
+        (click)="switchTab('courses')"
+        style="cursor: pointer;">
+        <i class="fas fa-book me-2"></i>
+        Cursos Completados
+        <span class="badge bg-success ms-2">{{ courses.length }}</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a 
+        class="nav-link" 
+        [class.active]="activeTab === 'modules'"
+        (click)="switchTab('modules')"
+        style="cursor: pointer;">
+        <i class="fas fa-layer-group me-2"></i>
+        Módulos Completados
+        <span class="badge bg-warning text-dark ms-2">{{ modules.length }}</span>
+      </a>
+    </li>
+  </ul>
+
   <div class="card mb-4">
     <div class="card-body">
       <div class="row g-3">
@@ -28,7 +58,7 @@
               id="searchText"
               [(ngModel)]="searchText"
               (input)="onSearchChange()"
-              placeholder="Buscar por título o módulo...">
+              [placeholder]="activeTab === 'courses' ? 'Buscar por título o módulo...' : 'Buscar por nombre de módulo...'">
             <button 
               class="btn btn-outline-secondary" 
               type="button"
@@ -46,152 +76,253 @@
             [(ngModel)]="sortBy"
             (change)="onSortChange()">
             <option value="recent">Completado Recientemente</option>
-            <option value="title">Título (A-Z)</option>
+            <option value="title">{{ activeTab === 'courses' ? 'Título' : 'Nombre' }} (A-Z)</option>
           </select>
         </div>
       </div>
       <div class="mt-2 text-muted">
         <small>
-          <i class="fas fa-trophy me-1"></i>
-          {{ filteredCourses.length }} curso{{ filteredCourses.length !== 1 ? 's' : '' }} completado{{ filteredCourses.length !== 1 ? 's' : '' }}
+          <i [class]="activeTab === 'courses' ? 'fas fa-book' : 'fas fa-layer-group'" class="me-1"></i>
+          {{ itemCount }} {{ activeTab === 'courses' ? 'curso' : 'módulo' }}{{ itemCount !== 1 ? 's' : '' }} completado{{ itemCount !== 1 ? 's' : '' }}
         </small>
       </div>
     </div>
   </div>
 
-  <!-- Loading -->
   <div *ngIf="loading" class="text-center py-5">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Cargando...</span>
     </div>
   </div>
 
-  <!-- Error -->
   <div *ngIf="error && !loading" class="alert alert-danger alert-dismissible fade show" role="alert">
     {{ error }}
     <button type="button" class="btn-close" (click)="error = ''" aria-label="Close"></button>
   </div>
 
-  <!-- Lista de Cursos -->
   <div *ngIf="!loading && !error">
     
-    <!-- Sin resultados -->
-    <div *ngIf="filteredCourses.length === 0" class="text-center py-5">
-      <i class="fas fa-medal fa-4x text-muted mb-4"></i>
-      <h4>{{ searchText ? 'No se encontraron cursos' : 'Aún no has completado ningún curso' }}</h4>
-      <p class="text-muted mb-4">
-        {{ searchText ? 'Intenta con otros términos de búsqueda' : 'Completa tus cursos en progreso para verlos aquí' }}
-      </p>
-      <button class="btn btn-primary" routerLink="/progress/in-progress" *ngIf="!searchText">
-        <i class="fas fa-play-circle me-2"></i>
-        Ver Cursos en Progreso
-      </button>
-      <button class="btn btn-secondary" (click)="clearSearch()" *ngIf="searchText">
-        <i class="fas fa-times me-2"></i>
-        Limpiar Búsqueda
-      </button>
-    </div>
+    <div *ngIf="activeTab === 'courses'">
+      
+      <div *ngIf="filteredCourses.length === 0" class="text-center py-5">
+        <i class="fas fa-medal fa-4x text-muted mb-4"></i>
+        <h4>{{ searchText ? 'No se encontraron cursos' : 'Aún no has completado ningún curso' }}</h4>
+        <p class="text-muted mb-4">
+          {{ searchText ? 'Intenta con otros términos de búsqueda' : 'Completa tus cursos en progreso para verlos aquí' }}
+        </p>
+        <button class="btn btn-primary" routerLink="/progress/in-progress" *ngIf="!searchText">
+          <i class="fas fa-play-circle me-2"></i>
+          Ver Cursos en Progreso
+        </button>
+        <button class="btn btn-secondary" (click)="clearSearch()" *ngIf="searchText">
+          <i class="fas fa-times me-2"></i>
+          Limpiar Búsqueda
+        </button>
+      </div>
 
-    <!-- Grid de Cursos Completados -->
-    <div class="row" *ngIf="filteredCourses.length > 0">
-      <div class="col-md-6 col-lg-4 mb-4" *ngFor="let course of filteredCourses">
-        <div class="card h-100 shadow-sm hover-shadow border-success">
-          
-          <!-- Thumbnail con Badge de Completado -->
-          <div class="position-relative">
-            <img 
-              *ngIf="course.courseThumbnail"
-              [src]="course.courseThumbnail" 
-              [alt]="course.courseTitle"
-              class="card-img-top"
-              style="height: 180px; object-fit: cover; opacity: 0.9;">
-            <div 
-              *ngIf="!course.courseThumbnail"
-              class="bg-success bg-opacity-25 d-flex align-items-center justify-content-center"
-              style="height: 180px;">
-              <i class="fas fa-book fa-3x text-success opacity-50"></i>
-            </div>
+      <div class="row" *ngIf="filteredCourses.length > 0">
+        <div class="col-md-6 col-lg-4 mb-4" *ngFor="let course of filteredCourses">
+          <div class="card h-100 shadow-sm hover-shadow border-success">
             
-            <!-- Badge de Completado -->
-            <div class="position-absolute top-0 end-0 m-2">
-              <span class="badge bg-success fs-6">
-                <i class="fas fa-trophy me-1"></i>
-                Completado
-              </span>
-            </div>
-
-            <!-- Overlay de Completado -->
-            <div class="position-absolute top-50 start-50 translate-middle">
-              <div class="bg-success rounded-circle p-3 shadow-lg" style="opacity: 0.9;">
-                <i class="fas fa-check fa-2x text-white"></i>
+            <div class="position-relative">
+              <img 
+                *ngIf="course.courseThumbnail"
+                [src]="course.courseThumbnail" 
+                [alt]="course.courseTitle"
+                class="card-img-top"
+                style="height: 180px; object-fit: cover; opacity: 0.9;">
+              <div 
+                *ngIf="!course.courseThumbnail"
+                class="bg-success bg-opacity-25 d-flex align-items-center justify-content-center"
+                style="height: 180px;">
+                <i class="fas fa-book fa-3x text-success opacity-50"></i>
               </div>
-            </div>
-          </div>
-
-          <div class="card-body d-flex flex-column">
-            <!-- Título -->
-            <h5 class="card-title">{{ course.courseTitle }}</h5>
-            
-            <!-- Módulo -->
-            <p class="card-text text-muted small mb-3">
-              <i class="fas fa-layer-group me-1"></i>
-              {{ course.moduleName || 'Sin módulo' }}
-            </p>
-
-            <!-- Estadísticas -->
-            <div class="mb-3">
-              <div class="d-flex justify-content-between small text-muted mb-2">
-                <span>
-                  <i class="fas fa-list-check me-1"></i>
-                  {{ course.totalChapters }} capítulos
+              
+              <div class="position-absolute top-0 end-0 m-2">
+                <span class="badge bg-success fs-6">
+                  <i class="fas fa-trophy me-1"></i>
+                  Completado
                 </span>
-                <span class="text-success">
-                  <i class="fas fa-check-double me-1"></i>
-                  100% completado
-                </span>
+              </div>
+
+              <div class="position-absolute top-50 start-50 translate-middle">
+                <div class="bg-success rounded-circle p-3 shadow-lg" style="opacity: 0.9;">
+                  <i class="fas fa-check fa-2x text-white"></i>
+                </div>
               </div>
             </div>
 
-            <!-- Información de Tiempo -->
-            <div class="mt-auto">
-              <div class="border-top pt-3">
-                <div class="mb-2">
-                  <small class="text-muted d-block">
-                    <i class="fas fa-calendar-check me-1"></i>
-                    Completado: {{ course.completedAt | date:'mediumDate' }}
-                  </small>
-                </div>
-                <div class="mb-3">
-                  <small class="text-muted d-block">
-                    <i class="fas fa-hourglass-half me-1"></i>
-                    Duración: {{ calculateDuration(course) }} día{{ calculateDuration(course) !== 1 ? 's' : '' }}
-                  </small>
-                </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ course.courseTitle }}</h5>
+              
+              <p class="card-text text-muted small mb-3">
+                <i class="fas fa-layer-group me-1"></i>
+                {{ course.moduleName || 'Sin módulo' }}
+              </p>
 
-                <!-- Botón de Ver Detalles -->
-                <button 
-                  class="btn btn-outline-success w-100"
-                  [routerLink]="['/progress/course', course.courseId]">
-                  <i class="fas fa-eye me-1"></i>
-                  Ver Detalles
-                </button>
+              <div class="mb-3">
+                <div class="alert alert-success mb-2 py-2" role="alert">
+                  <i class="fas fa-medal me-2"></i>
+                  <strong>🥈¡Insignia Bronce Desbloqueada!🥈</strong>
+                </div>
+                <div class="d-flex justify-content-between small text-muted mb-2">
+                  <span>
+                    <i class="fas fa-list-check me-1"></i>
+                    {{ course.totalChapters }} capítulos
+                  </span>
+                  <span class="text-success">
+                    <i class="fas fa-check-double me-1"></i>
+                    100% completado
+                  </span>
+                </div>
+              </div>
+
+              <div class="mt-auto">
+                <div class="border-top pt-3">
+                  <div class="mb-2">
+                    <small class="text-muted d-block">
+                      <i class="fas fa-calendar-check me-1"></i>
+                      Completado: {{ course.completedAt | date:'mediumDate' }}
+                    </small>
+                  </div>
+                  <div class="mb-3">
+                    <small class="text-muted d-block">
+                      <i class="fas fa-hourglass-half me-1"></i>
+                      Duración: {{ calculateDuration(course) }} día{{ calculateDuration(course) !== 1 ? 's' : '' }}
+                    </small>
+                  </div>
+
+                 <button 
+                 class="btn btn-outline-success w-100"
+                 [routerLink]="['/progress/modules']">
+                <i class="fas fa-eye me-1"></i>
+                     Ver Detalles
+               </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <div *ngIf="filteredCourses.length > 0 && !searchText" class="alert alert-success mt-4" role="alert">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-star fa-2x me-3"></i>
+          <div>
+            <h5 class="alert-heading">¡Excelente trabajo!</h5>
+            <p class="mb-0">
+              Has completado {{ courses.length }} curso{{ courses.length !== 1 ? 's' : '' }}. 
+              ¡Sigue aprendiendo y alcanzando nuevas metas!
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Mensaje de Felicitación -->
-    <div *ngIf="filteredCourses.length > 0 && !searchText" class="alert alert-success mt-4" role="alert">
-      <div class="d-flex align-items-center">
-        <i class="fas fa-star fa-2x me-3"></i>
-        <div>
-          <h5 class="alert-heading">¡Excelente trabajo!</h5>
-          <p class="mb-0">
-            Has completado {{ courses.length }} curso{{ courses.length !== 1 ? 's' : '' }}. 
-            ¡Sigue aprendiendo y alcanzando nuevas metas!
-          </p>
+    <div *ngIf="activeTab === 'modules'">
+      
+      <div *ngIf="filteredModules.length === 0" class="text-center py-5">
+        <i class="fas fa-crown fa-4x text-warning mb-4"></i>
+        <h4>{{ searchText ? 'No se encontraron módulos' : 'Aún no has completado ningún módulo completo' }}</h4>
+        <p class="text-muted mb-4">
+          {{ searchText ? 'Intenta con otros términos de búsqueda' : 'Completa todos los cursos de un módulo para obtener la insignia oro' }}
+        </p>
+        <button class="btn btn-warning" routerLink="/progress/in-progress" *ngIf="!searchText">
+          <i class="fas fa-play-circle me-2"></i>
+          Continuar Aprendiendo
+        </button>
+        <button class="btn btn-secondary" (click)="clearSearch()" *ngIf="searchText">
+          <i class="fas fa-times me-2"></i>
+          Limpiar Búsqueda
+        </button>
+      </div>
+
+      <div class="row" *ngIf="filteredModules.length > 0">
+        <div class="col-md-6 col-lg-4 mb-4" *ngFor="let module of filteredModules">
+          <div class="card h-100 shadow-sm hover-shadow border-warning">
+            
+            <div class="position-relative">
+              <div 
+                class="bg-warning bg-opacity-25 d-flex align-items-center justify-content-center"
+                style="height: 180px;">
+                <i [class]="'fas fa-' + (module.moduleIcon || 'layer-group') + ' fa-4x text-warning opacity-75'"></i>
+              </div>
+              
+              <div class="position-absolute top-0 end-0 m-2">
+                <span class="badge bg-warning text-dark fs-6">
+                  <i class="fas fa-crown me-1"></i>
+                  Módulo Maestro
+                </span>
+              </div>
+
+              <div class="position-absolute top-50 start-50 translate-middle">
+                <div class="bg-warning rounded-circle p-3 shadow-lg" style="opacity: 0.95;">
+                  <i class="fas fa-trophy fa-2x text-white"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title text-warning">
+                <i class="fas fa-star me-1"></i>
+                {{ module.moduleName }}
+              </h5>
+              
+              <p class="card-text text-muted small mb-3" *ngIf="module.moduleDescription">
+                {{ module.moduleDescription }}
+              </p>
+
+              <div class="mb-3">
+                <div class="alert alert-warning mb-2" role="alert">
+                  <i class="fas fa-trophy me-2"></i>
+                  <strong>🏅¡Insignia Oro Desbloqueada!🏅</strong>
+                </div>
+                <div class="d-flex justify-content-between small text-muted">
+                  <span>
+                    <i class="fas fa-graduation-cap me-1"></i>
+                    {{ module.totalCourses }} cursos completados
+                  </span>
+                  <span class="text-warning">
+                    <i class="fas fa-star me-1"></i>
+                    100% Maestría
+                  </span>
+                </div>
+              </div>
+
+              <div class="mt-auto">
+                <div class="border-top pt-3">
+                  <div class="mb-3">
+                    <small class="text-muted d-block">
+                      <i class="fas fa-calendar-check me-1"></i>
+                      Completado: {{ module.completedAt | date:'mediumDate' }}
+                    </small>
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    <button 
+                      class="btn btn-outline-warning flex-fill"
+                      [routerLink]="['/modules', module.moduleId]">
+                      <i class="fas fa-eye me-1"></i>
+                      Descargar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="filteredModules.length > 0 && !searchText" class="alert alert-warning mt-4" role="alert">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-crown fa-2x me-3 text-warning"></i>
+          <div>
+            <h5 class="alert-heading">¡Eres un Maestro!</h5>
+            <p class="mb-0">
+              Has completado {{ modules.length }} módulo{{ modules.length !== 1 ? 's' : '' }}{{ modules.length !== 1 ? 's' : '' }}. 
+              ¡Has demostrado dominio total en estas áreas!
+            </p>
+          </div>
         </div>
       </div>
     </div>

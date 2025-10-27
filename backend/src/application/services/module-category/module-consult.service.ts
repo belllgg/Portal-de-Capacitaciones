@@ -11,9 +11,7 @@ export class ModuleConsultService {
     private readonly moduleConsultDao: ModuleConsultDao
   ) {}
 
-  /**
-   * Obtener todos los módulos
-   */
+
   async findAll(): Promise<{ 
     success: boolean; 
     message: string; 
@@ -33,9 +31,7 @@ export class ModuleConsultService {
     }
   }
 
-  /**
-   * Obtener todos los módulos con estadísticas (conteo de cursos)
-   */
+
   async findAllWithStats(): Promise<{ 
     success: boolean; 
     message: string; 
@@ -93,9 +89,7 @@ export class ModuleConsultService {
     }
   }
 
-  /**
-   * Obtener un módulo por ID con estadísticas
-   */
+
   async findByIdWithStats(id: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -130,9 +124,7 @@ export class ModuleConsultService {
     }
   }
 
-  /**
-   * Listar módulos de forma simplificada (para selects/dropdowns)
-   */
+ 
   async findAllSimple(): Promise<{ 
     success: boolean; 
     message: string; 
@@ -159,9 +151,7 @@ export class ModuleConsultService {
     }
   }
 
-  /**
-   * Mapear entidad a DTO de respuesta
-   */
+
   private mapToResponseDto(module: Modules): ModuleResponseDto {
     return {
       id: module.id,

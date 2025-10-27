@@ -12,9 +12,7 @@ export class ContentDeleteDao {
     private readonly contentRepository: Repository<ChapterContent>,
   ) {}
 
-  /**
-   * Eliminar un contenido permanentemente
-   */
+
   async delete(id: number): Promise<boolean> {
     try {
       const result = await this.contentRepository.delete(id);
@@ -28,9 +26,6 @@ export class ContentDeleteDao {
     }
   }
 
-  /**
-   * Eliminar todos los contenidos de un capítulo
-   */
   async deleteByChapterId(chapterId: number): Promise<boolean> {
     try {
       const result = await this.contentRepository.delete({ chapterId });

@@ -12,9 +12,7 @@ export class ModuleConsultDao {
     private readonly moduleRepository: Repository<Modules>,
   ) {}
 
-  /**
-   * Obtener todos los módulos
-   */
+  
   async findAll(): Promise<Modules[]> {
     try {
       return await this.moduleRepository.find({
@@ -29,9 +27,7 @@ export class ModuleConsultDao {
     }
   }
 
-  /**
-   * Buscar módulo por ID
-   */
+
   async findById(id: number): Promise<Modules | null> {
     try {
       return await this.moduleRepository.findOne({ 
@@ -46,9 +42,6 @@ export class ModuleConsultDao {
     }
   }
 
-  /**
-   * Buscar módulo por nombre
-   */
   async findByName(name: string): Promise<Modules | null> {
     try {
       return await this.moduleRepository.findOne({ 
@@ -63,19 +56,15 @@ export class ModuleConsultDao {
     }
   }
 
-  /**
-   * Contar cursos activos por módulo
-   * (Por ahora retorna 0, cuando creemos la tabla courses funcionará)
-   */
+
   async countActiveCoursesByModule(moduleId: number): Promise<number> {
     try {
-      // TODO: Implementar cuando exista la tabla courses
-      // const result = await this.moduleRepository
-      //   .createQueryBuilder('module')
-      //   .leftJoin('module.courses', 'course')
-      //   .where('module.id = :moduleId', { moduleId })
-      //   .andWhere('course.state_id = :stateId', { stateId: 2 })
-      //   .getCount();
+       const result = await this.moduleRepository
+       .createQueryBuilder('module')
+      .leftJoin('module.courses', 'course')
+      .where('module.id = :moduleId', { moduleId })
+      .andWhere('course.state_id = :stateId', { stateId: 2 })
+      .getCount();
       
       return 0; // Por ahora retorna 0
     } catch (error) {
@@ -87,9 +76,7 @@ export class ModuleConsultDao {
     }
   }
 
-  /**
-   * Verificar si existe un módulo por nombre (para validaciones)
-   */
+
   async existsByName(name: string): Promise<boolean> {
     try {
       const count = await this.moduleRepository.count({ where: { name } });
@@ -103,9 +90,7 @@ export class ModuleConsultDao {
     }
   }
 
-  /**
-   * Verificar si existe un módulo por ID
-   */
+
   async existsById(id: number): Promise<boolean> {
     try {
       const count = await this.moduleRepository.count({ where: { id } });

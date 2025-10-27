@@ -12,9 +12,7 @@ export class CourseDeleteDao {
     private readonly courseRepository: Repository<Course>,
   ) {}
 
-  /**
-   * Eliminar un curso (soft delete cambiando estado a ARCHIVED)
-   */
+
   async softDelete(id: number): Promise<Course | null> {
     try {
       await this.courseRepository.update(id, { stateId: 4 }); // 4 = ARCHIVED
@@ -32,9 +30,7 @@ export class CourseDeleteDao {
     }
   }
 
-  /**
-   * Eliminar un curso permanentemente
-   */
+ 
   async delete(id: number): Promise<boolean> {
     try {
       const result = await this.courseRepository.delete(id);
@@ -42,7 +38,6 @@ export class CourseDeleteDao {
     } catch (error) {
       this.logger.error(`Error al eliminar curso en BD: ${error.message}`, error.stack);
       
-      // Si hay capítulos asociados, no se puede eliminar
       if (error.code === '23503') {
         throw new HttpException(
           'No se puede eliminar el curso porque tiene capítulos asociados',

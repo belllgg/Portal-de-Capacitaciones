@@ -13,9 +13,7 @@ export class CourseCreateService {
     private readonly moduleConsultDao: ModuleConsultDao
   ) {}
 
-  /**
-   * Crear un nuevo curso (solo ADMIN)
-   */
+
   async create(
     createCourseDto: CreateCourseDto, 
     createdBy: number
@@ -25,7 +23,6 @@ export class CourseCreateService {
     data?: CourseResponseDto 
   }> {
     try {
-      // Validar que el módulo existe
       const moduleExists = await this.moduleConsultDao.existsById(createCourseDto.moduleId);
       
       if (!moduleExists) {
@@ -35,7 +32,6 @@ export class CourseCreateService {
         );
       }
 
-      // Crear el curso
       const course = await this.CourseCreateDao.create(createCourseDto, createdBy);
 
       return {

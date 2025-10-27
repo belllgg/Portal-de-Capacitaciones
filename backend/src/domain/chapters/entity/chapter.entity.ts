@@ -50,5 +50,5 @@ export class Chapter {
   state: ChapterState;
 
   // @OneToMany(() => ChapterContent, content => content.chapter)
-  // contents: ChapterContent[]; // Lo agregamos cuando creemos contents
+  // contents: ChapterContent[]; 
 }

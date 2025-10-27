@@ -15,13 +15,7 @@ export class BadgeMutationDao {
     private readonly userBadgeRepository: Repository<UserBadge>,
   ) {}
 
-  // ==========================================
-  // MUTACIONES DE BADGE TYPES
-  // ==========================================
 
-  /**
-   * Crear un nuevo tipo de insignia
-   */
   async createBadgeType(createBadgeTypeDto: CreateBadgeTypeDto): Promise<BadgeType> {
     try {
       const badgeType = this.badgeTypeRepository.create(createBadgeTypeDto);
@@ -43,9 +37,6 @@ export class BadgeMutationDao {
     }
   }
 
-  /**
-   * Actualizar un tipo de insignia
-   */
   async updateBadgeType(
     id: number, 
     updateBadgeTypeDto: UpdateBadgeTypeDto
@@ -75,9 +66,7 @@ export class BadgeMutationDao {
     }
   }
 
-  /**
-   * Eliminar un tipo de insignia
-   */
+
   async deleteBadgeType(id: number): Promise<boolean> {
     try {
       const result = await this.badgeTypeRepository.delete(id);
@@ -99,13 +88,6 @@ export class BadgeMutationDao {
     }
   }
 
-  // ==========================================
-  // MUTACIONES DE USER BADGES
-  // ==========================================
-
-  /**
-   * Otorgar una insignia a un usuario
-   */
   async awardBadge(
     userId: number, 
     badgeTypeId: number, 
@@ -143,9 +125,6 @@ export class BadgeMutationDao {
     }
   }
 
-  /**
-   * Revocar una insignia de un usuario
-   */
   async revokeBadge(userBadgeId: number): Promise<boolean> {
     try {
       const result = await this.userBadgeRepository.delete(userBadgeId);
@@ -159,9 +138,6 @@ export class BadgeMutationDao {
     }
   }
 
-  /**
-   * Revocar todas las insignias de un usuario
-   */
   async revokeAllUserBadges(userId: number): Promise<boolean> {
     try {
       const result = await this.userBadgeRepository.delete({ userId });

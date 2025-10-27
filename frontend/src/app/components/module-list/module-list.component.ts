@@ -26,12 +26,11 @@ export class ModuleListComponent implements OnInit, OnDestroy {
     console.log('🔄 Componente inicializado');
     this.loadModules();
     
-    // ✅ Recargar cada vez que navegamos a esta ruta
     this.routerSubscription = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         if (event.url === '/modules' || event.url.startsWith('/modules')) {
-          console.log('🔄 Recargando por navegación');
+          console.log('Recargando por navegación');
           this.loadModules();
         }
       });
@@ -45,18 +44,18 @@ export class ModuleListComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = '';
     
-    console.log('📡 Cargando módulos...');
+    console.log('Cargando módulos...');
     
     this.moduleService.getAllModules().subscribe({
       next: (data) => {
         this.modules = data;
         this.loading = false;
-        console.log('✅ Módulos cargados:', data);
+        console.log('Módulos cargados:', data);
       },
       error: (error) => {
         this.error = 'Error al cargar los módulos';
         this.loading = false;
-        console.error('❌ Error:', error);
+        console.error('Error:', error);
       }
     });
   }
@@ -70,15 +69,20 @@ export class ModuleListComponent implements OnInit, OnDestroy {
       this.loading = true;
       this.moduleService.deleteModule(module.id).subscribe({
         next: () => {
-          console.log('✅ Módulo eliminado, recargando lista...');
+          console.log('Módulo eliminado, recargando lista...');
           this.loadModules();
         },
         error: (error) => {
           this.error = error.error?.message || 'Error al eliminar el módulo';
           this.loading = false;
-          console.error('❌ Error al eliminar:', error);
+          console.error('Error al eliminar:', error);
         }
       });
     }
   }
+  viewCourses(moduleId: number): void {
+  this.router.navigate(['/courses'], { 
+    queryParams: { moduleId: moduleId } 
+  });
+}
 }

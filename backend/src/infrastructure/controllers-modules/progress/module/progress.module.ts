@@ -15,7 +15,7 @@ import { BadgesModule } from '../../user-badge/module/badge.module';
     TypeOrmModule.forFeature([UserCourseProgress, UserChapterProgress]),
     CourseModule, 
     ChapterModule,
-    forwardRef(() => BadgesModule) // ← USAR forwardRef AQUÍ
+    forwardRef(() => BadgesModule) 
   ],
   controllers: [ProgressController],
   providers: [

@@ -12,9 +12,7 @@ export class CourseConsultDao {
     private readonly courseRepository: Repository<Course>,
   ) {}
 
-  /**
-   * Obtener todos los cursos
-   */
+ 
   async findAll(): Promise<Course[]> {
     try {
       return await this.courseRepository.find({
@@ -30,9 +28,7 @@ export class CourseConsultDao {
     }
   }
 
-  /**
-   * Buscar curso por ID
-   */
+
   async findById(id: number): Promise<Course | null> {
     try {
       return await this.courseRepository.findOne({ 
@@ -48,9 +44,7 @@ export class CourseConsultDao {
     }
   }
 
-  /**
-   * Buscar cursos por módulo
-   */
+ 
   async findByModuleId(moduleId: number): Promise<Course[]> {
     try {
       return await this.courseRepository.find({
@@ -67,9 +61,6 @@ export class CourseConsultDao {
     }
   }
 
-  /**
-   * Buscar cursos ACTIVOS por módulo
-   */
   async findActiveByModuleId(moduleId: number): Promise<Course[]> {
     try {
       return await this.courseRepository.find({
@@ -89,9 +80,7 @@ export class CourseConsultDao {
     }
   }
 
-  /**
-   * Buscar solo cursos ACTIVOS
-   */
+ 
   async findActiveOnly(): Promise<Course[]> {
     try {
       return await this.courseRepository.find({
@@ -108,9 +97,6 @@ export class CourseConsultDao {
     }
   }
 
-  /**
-   * Buscar cursos por estado
-   */
   async findByStateId(stateId: number): Promise<Course[]> {
     try {
       return await this.courseRepository.find({
@@ -127,9 +113,7 @@ export class CourseConsultDao {
     }
   }
 
-  /**
-   * Buscar cursos creados por un usuario
-   */
+
   async findByCreatorId(creatorId: number): Promise<Course[]> {
     try {
       return await this.courseRepository.find({
@@ -146,9 +130,7 @@ export class CourseConsultDao {
     }
   }
 
-  /**
-   * Verificar si existe un curso por ID
-   */
+ 
   async existsById(id: number): Promise<boolean> {
     try {
       const count = await this.courseRepository.count({ where: { id } });
@@ -162,9 +144,7 @@ export class CourseConsultDao {
     }
   }
 
-  /**
-   * Contar cursos por módulo
-   */
+
   async countByModuleId(moduleId: number): Promise<number> {
     try {
       return await this.courseRepository.count({ 
@@ -179,9 +159,6 @@ export class CourseConsultDao {
     }
   }
 
-  /**
-   * Contar cursos activos por módulo
-   */
   async countActiveByModuleId(moduleId: number): Promise<number> {
     try {
       return await this.courseRepository.count({ 
@@ -199,9 +176,7 @@ export class CourseConsultDao {
     }
   }
 
-  /**
-   * Buscar cursos con búsqueda por texto (título o descripción)
-   */
+
   async searchByText(searchText: string): Promise<Course[]> {
     try {
       return await this.courseRepository

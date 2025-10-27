@@ -15,9 +15,7 @@ export class CourseUpdateService {
     private readonly moduleConsultDao: ModuleConsultDao
   ) {}
 
-  /**
-   * Actualizar un curso existente (solo ADMIN o CREADOR)
-   */
+ 
   async update(
     id: number, 
     updateCourseDto: UpdateCourseDto
@@ -27,7 +25,6 @@ export class CourseUpdateService {
     data?: CourseResponseDto 
   }> {
     try {
-      // Verificar que el curso existe
       const exists = await this.courseConsultDao.existsById(id);
       
       if (!exists) {
@@ -37,7 +34,6 @@ export class CourseUpdateService {
         };
       }
 
-      // Si se está cambiando el módulo, validar que existe
       if (updateCourseDto.moduleId) {
         const moduleExists = await this.moduleConsultDao.existsById(updateCourseDto.moduleId);
         
@@ -49,7 +45,6 @@ export class CourseUpdateService {
         }
       }
 
-      // Actualizar el curso
       const course = await this.CourseUpdateDao.update(id, updateCourseDto);
 
       if (!course) {
@@ -71,9 +66,6 @@ export class CourseUpdateService {
   }
 
 
-  /**
-   * Cambiar el estado de un curso
-   */
   async changeState(
     id: number, 
     stateId: number
@@ -83,7 +75,6 @@ export class CourseUpdateService {
     data?: CourseResponseDto 
   }> {
     try {
-      // Verificar que el curso existe
       const exists = await this.courseConsultDao.existsById(id);
       
       if (!exists) {
@@ -93,7 +84,6 @@ export class CourseUpdateService {
         };
       }
 
-      // Validar que el estado es válido (1-4)
       if (stateId < 1 || stateId > 4) {
         throw new HttpException(
           'Estado inválido. Debe ser 1 (DRAFT), 2 (ACTIVE), 3 (INACTIVE) o 4 (ARCHIVED)',
@@ -101,7 +91,6 @@ export class CourseUpdateService {
         );
       }
 
-      // Cambiar el estado
       const course = await this.CourseUpdateDao.changeState(id, stateId);
 
       if (!course) {
@@ -122,9 +111,6 @@ export class CourseUpdateService {
     }
   }
 
-  /**
-   * Publicar un curso (cambiar de DRAFT a ACTIVE)
-   */
   async publish(id: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -133,9 +119,6 @@ export class CourseUpdateService {
     return await this.changeState(id, 2); // 2 = ACTIVE
   }
 
-  /**
-   * Pausar un curso (cambiar a INACTIVE)
-   */
   async pause(id: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -144,9 +127,7 @@ export class CourseUpdateService {
     return await this.changeState(id, 3); // 3 = INACTIVE
   }
 
-  /**
-   * Mapear a DTO de respuesta
-   */
+
   private mapToResponseDto(course: Course): CourseResponseDto {
     return {
       id: course.id,

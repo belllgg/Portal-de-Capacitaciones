@@ -1,11 +1,9 @@
-
 <ng-container *ngIf="!isAuthenticated()">
   <router-outlet></router-outlet>
 </ng-container>
 
 <ng-container *ngIf="isAuthenticated()">
   <div class="dashboard-container">
-    <!-- Sidebar -->
     <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
       <div class="sidebar-header">
         <i class="fas fa-users-cog"></i>
@@ -38,8 +36,56 @@
           <i class="fas fa-bars"></i>
         </button>
         <h1 class="page-title">{{ title }}</h1>
-        <div class="user-info">
-          <i class="fas fa-user-circle"></i>
+        
+        <div class="user-menu-container">
+          <button class="user-menu-trigger" (click)="toggleUserMenu()">
+            <div class="user-avatar">
+              {{ getUserInitials() }}
+            </div>
+            <div class="user-info-text">
+              <span class="user-name">{{ getUserName() }}</span>
+              <span class="user-role">{{ getUserRole() }}</span>
+            </div>
+            <i class="fas fa-chevron-down dropdown-icon" [class.rotate]="userMenuOpen"></i>
+          </button>
+
+          <div class="user-dropdown" [class.show]="userMenuOpen">
+            <div class="dropdown-header">
+              <div class="user-avatar-large">
+                {{ getUserInitials() }}
+              </div>
+              <div class="user-details">
+                <h6>{{ getUserName() }}</h6>
+                <p>{{ getUserEmail() }}</p>
+                <span class="role-badge" [class.admin]="getUserRole() === 'ADMIN'">
+                  <i class="fas fa-shield-alt me-1"></i>
+                  {{ getUserRole() }}
+                </span>
+              </div>
+            </div>
+
+            <div class="dropdown-divider"></div>
+
+            <div class="dropdown-body">
+              <a routerLink="/progress/modules" class="dropdown-item" (click)="userMenuOpen = false">
+                <i class="fas fa-chart-line"></i>
+                <span>🎯Mi Progreso</span>
+              </a>
+              <a routerLink="/progress/completed" class="dropdown-item" (click)="userMenuOpen = false">
+                <i class="fas fa-trophy"></i>
+                <span>🏅Mis Insignias</span>
+              </a>
+            </div>
+
+            <div class="dropdown-divider"></div>
+
+            <div class="dropdown-footer">
+              <button class="dropdown-item logout-btn" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -47,5 +93,10 @@
         <router-outlet></router-outlet>
       </main>
     </div>
+  </div>
+
+  <div class="dropdown-overlay" 
+       *ngIf="userMenuOpen" 
+       (click)="userMenuOpen = false">
   </div>
 </ng-container>

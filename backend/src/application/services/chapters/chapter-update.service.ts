@@ -14,9 +14,6 @@ export class ChapterUpdateService {
   ) {}
 
 
-  /**
-   * Actualizar un capítulo existente
-   */
   async update(
     id: number, 
     updateChapterDto: UpdateChapterDto
@@ -26,7 +23,6 @@ export class ChapterUpdateService {
     data?: ChapterResponseDto 
   }> {
     try {
-      // Verificar que el capítulo existe
       const chapter = await this.chapterConsultDao.findById(id);
       
       if (!chapter) {
@@ -36,12 +32,11 @@ export class ChapterUpdateService {
         };
       }
 
-      // Si se está cambiando el order_index, validar que no esté duplicado
       if (updateChapterDto.orderIndex !== undefined) {
         const orderExists = await this.chapterConsultDao.existsByOrderIndex(
           chapter.courseId,
           updateChapterDto.orderIndex,
-          id // Excluir el capítulo actual
+          id 
         );
         
         if (orderExists) {
@@ -52,7 +47,6 @@ export class ChapterUpdateService {
         }
       }
 
-      // Actualizar el capítulo
       const updatedChapter = await this.ChapterUpdateDao.update(id, updateChapterDto);
 
       if (!updatedChapter) {
@@ -73,9 +67,6 @@ export class ChapterUpdateService {
     }
   }
 
-  /**
-   * Reordenar capítulos de un curso
-   */
   async reorder(
     courseId: number,
     reorderDto: ReorderChaptersDto
@@ -84,7 +75,6 @@ export class ChapterUpdateService {
     message: string 
   }> {
     try {
-      // Validar que todos los IDs pertenecen al curso
       const chapters = await this.chapterConsultDao.findByCourseId(courseId);
       const chapterIds = chapters.map(ch => ch.id);
       
@@ -97,13 +87,11 @@ const invalidIds = reorderDto.chapterIds.filter(id => !chapterIds.includes(id));
         );
       }
 
-      // Crear array de actualizaciones
       const updates = reorderDto.chapterIds.map((id, index) => ({
         id,
-        orderIndex: index + 1 // Orden comienza en 1
+        orderIndex: index + 1 
       }));
 
-      // Actualizar todos los order_index
       await this.ChapterUpdateDao.updateOrderIndexes(updates);
 
       return {
@@ -116,9 +104,6 @@ const invalidIds = reorderDto.chapterIds.filter(id => !chapterIds.includes(id));
     }
   }
 
-  /**
-   * Cambiar el estado de un capítulo
-   */
   async changeState(
     id: number, 
     stateId: number
@@ -128,7 +113,6 @@ const invalidIds = reorderDto.chapterIds.filter(id => !chapterIds.includes(id));
     data?: ChapterResponseDto 
   }> {
     try {
-      // Verificar que el capítulo existe
       const exists = await this.chapterConsultDao.existsById(id);
       
       if (!exists) {
@@ -138,7 +122,6 @@ const invalidIds = reorderDto.chapterIds.filter(id => !chapterIds.includes(id));
         };
       }
 
-      // Validar que el estado es válido (1-3)
       if (stateId < 1 || stateId > 3) {
         throw new HttpException(
           'Estado inválido. Debe ser 1 (DRAFT), 2 (PUBLISHED) o 3 (ARCHIVED)',
@@ -146,7 +129,6 @@ const invalidIds = reorderDto.chapterIds.filter(id => !chapterIds.includes(id));
         );
       }
 
-      // Cambiar el estado
       const chapter = await this.ChapterUpdateDao.changeState(id, stateId);
 
       if (!chapter) {
@@ -167,9 +149,7 @@ const invalidIds = reorderDto.chapterIds.filter(id => !chapterIds.includes(id));
     }
   }
 
-  /**
-   * Publicar un capítulo (cambiar de DRAFT a PUBLISHED)
-   */
+
   async publish(id: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -178,9 +158,7 @@ const invalidIds = reorderDto.chapterIds.filter(id => !chapterIds.includes(id));
     return await this.changeState(id, 2); // 2 = PUBLISHED
   }
 
-  /**
-   * Mapear a DTO de respuesta
-   */
+
   private mapToResponseDto(chapter: Chapter): ChapterResponseDto {
     return {
       id: chapter.id,

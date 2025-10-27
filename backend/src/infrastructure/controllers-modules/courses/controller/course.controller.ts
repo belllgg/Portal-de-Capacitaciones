@@ -54,31 +54,19 @@ export class CoursesController {
     return await this.CourseCreateService.create(createCourseDto, createdBy);
   }
 
-
-  /**
-   * GET /api/courses
-   * Obtener todos los cursos
-   */
   @Get('consult-all')
   @HttpCode(HttpStatus.OK)
   async findAll() {
     return await this.courseConsultService.findAll();
   }
 
-  /**
-   * GET /api/courses/active
-   * Obtener solo cursos activos
-   */
   @Get('consult-active')
   @HttpCode(HttpStatus.OK)
   async findActiveOnly() {
     return await this.courseConsultService.findActiveOnly();
   }
 
-  /**
-   * GET /api/courses/search?text=react
-   * Buscar cursos por texto
-   */
+ 
   @Get('search')
   @HttpCode(HttpStatus.OK)
   async searchByText(@Query('text') text: string) {
@@ -91,60 +79,40 @@ export class CoursesController {
     return await this.courseConsultService.searchByText(text);
   }
 
-  /**
-   * GET /api/courses/state/:stateId
-   * Obtener cursos por estado
-   */
+ 
   @Get('state/:stateId')
   @HttpCode(HttpStatus.OK)
   async findByStateId(@Param('stateId', ParseIntPipe) stateId: number) {
     return await this.courseConsultService.findByStateId(stateId);
   }
 
-  /**
-   * GET /api/courses/module/:moduleId
-   * Obtener cursos por módulo
-   */
+
   @Get('module/:moduleId')
   @HttpCode(HttpStatus.OK)
   async findByModuleId(@Param('moduleId', ParseIntPipe) moduleId: number) {
     return await this.courseConsultService.findByModuleId(moduleId);
   }
 
-  /**
-   * GET /api/courses/module/:moduleId/active
-   * Obtener cursos ACTIVOS por módulo
-   */
+
   @Get('module/:moduleId/active')
   @HttpCode(HttpStatus.OK)
   async findActiveByModuleId(@Param('moduleId', ParseIntPipe) moduleId: number) {
     return await this.courseConsultService.findActiveByModuleId(moduleId);
   }
 
-  /**
-   * GET /api/courses/creator/:creatorId
-   * Obtener cursos creados por un usuario
-   */
+ 
   @Get('consult-creator/:creatorId')
   @HttpCode(HttpStatus.OK)
   async findByCreatorId(@Param('creatorId', ParseIntPipe) creatorId: number) {
     return await this.courseConsultService.findByCreatorId(creatorId);
   }
 
-  /**
-   * GET /api/courses/:id
-   * Obtener un curso por ID
-   */
   @Get('consult:id')
   @HttpCode(HttpStatus.OK)
   async findById(@Param('id', ParseIntPipe) id: number) {
     return await this.courseConsultService.findById(id);
   }
 
-  /**
-   * PUT /api/courses/:id
-   * Actualizar un curso (solo ADMIN o CREADOR)
-   */
   @Put('update/:id')
 
   @HttpCode(HttpStatus.OK)
@@ -155,13 +123,8 @@ export class CoursesController {
     return await this.CourseUpdateService.update(id, updateCourseDto);
   }
 
-  /**
-   * PATCH /api/courses/:id/state
-   * Cambiar el estado de un curso
-   */
   @Patch(':id/state')
-  // @UseGuards(RolesGuard)
-  // @Roles('ADMIN')
+
   @HttpCode(HttpStatus.OK)
   async changeState(
     @Param('id', ParseIntPipe) id: number,
@@ -170,10 +133,6 @@ export class CoursesController {
     return await this.CourseUpdateService.changeState(id, changeStateDto.stateId);
   }
 
-  /**
-   * PATCH /api/courses/:id/publish
-   * Publicar un curso (DRAFT -> ACTIVE)
-   */
   @Patch(':id/publish')
   
   @HttpCode(HttpStatus.OK)
@@ -181,37 +140,20 @@ export class CoursesController {
     return await this.CourseUpdateService.publish(id);
   }
 
-  /**
-   * PATCH /api/courses/:id/pause
-   * Pausar un curso (ACTIVE -> INACTIVE)
-   */
   @Patch(':id/pause')
-  // @UseGuards(RolesGuard)
-  // @Roles('ADMIN')
+
   @HttpCode(HttpStatus.OK)
   async pause(@Param('id', ParseIntPipe) id: number) {
     return await this.CourseUpdateService.pause(id);
   }
 
-  /**
-   * DELETE /api/courses/:id/soft
-   * Archivar un curso (soft delete)
-   */
   @Delete('delete:id/soft')
-  // @UseGuards(RolesGuard)
-  // @Roles('ADMIN')
   @HttpCode(HttpStatus.OK)
   async softDelete(@Param('id', ParseIntPipe) id: number) {
     return await this.CourseDeleteService.softDelete(id);
   }
 
-  /**
-   * DELETE /api/courses/:id
-   * Eliminar un curso permanentemente (solo ADMIN)
-   */
   @Delete('delete:id')
-  // @UseGuards(RolesGuard)
-  // @Roles('ADMIN')
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id', ParseIntPipe) id: number) {
     return await this.CourseDeleteService.delete(id);

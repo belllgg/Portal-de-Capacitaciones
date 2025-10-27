@@ -1,0 +1,260 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2>
+        <i class="fas fa-chart-line text-primary me-2"></i>
+        🎯Mi Progreso de Módulos🎯
+      </h2>
+      <p class="text-muted mb-0">Visualiza tu avance en todos los módulos disponibles</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-warning" routerLink="/progress/completed">
+        <i class="fas fa-trophy"></i> 🏆Mis Insignias 
+      </button>
+      <button class="btn btn-outline-primary" routerLink="/dashboard">
+        <i class="fas fa-tachometer-alt"></i> Ver Modulos
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3 text-muted">Cargando tu progreso...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ error }}
+    <button type="button" class="btn-close" (click)="error = ''" aria-label="Close"></button>
+  </div>
+
+  <div *ngIf="!loading && !error">
+    
+    <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <i class="fas fa-layer-group fa-2x text-primary mb-2"></i>
+            <h3 class="mb-0">{{ stats.total }}</h3>
+            <p class="text-muted mb-0 small">Total Módulos</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 mb-3">
+        <div class="card text-center shadow-sm h-100 border-success">
+          <div class="card-body">
+            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+            <h3 class="mb-0 text-success">{{ stats.completed }}</h3>
+            <p class="text-muted mb-0 small">Completados</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 mb-3">
+        <div class="card text-center shadow-sm h-100 border-warning">
+          <div class="card-body">
+            <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+            <h3 class="mb-0 text-warning">{{ stats.inProgress }}</h3>
+            <p class="text-muted mb-0 small">En Progreso</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 mb-3">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <i class="fas fa-circle fa-2x text-secondary mb-2"></i>
+            <h3 class="mb-0 text-secondary">{{ stats.notStarted }}</h3>
+            <p class="text-muted mb-0 small">No Iniciados</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0">
+            <i class="fas fa-chart-pie text-primary me-2"></i>
+            Progreso General
+          </h5>
+          <span class="badge bg-primary fs-6">{{ stats.totalProgress }}%</span>
+        </div>
+        <div class="progress" style="height: 30px;">
+          <div 
+            class="progress-bar bg-primary" 
+            role="progressbar" 
+            [style.width.%]="stats.totalProgress"
+            [attr.aria-valuenow]="stats.totalProgress" 
+            aria-valuemin="0" 
+            aria-valuemax="100">
+            <strong>{{ stats.totalProgress }}%</strong>
+          </div>
+        </div>
+        <p class="text-muted small mt-2 mb-0">
+          <i class="fas fa-info-circle me-1"></i>
+          Promedio de todos los módulos
+        </p>
+      </div>
+    </div>
+
+    <div *ngIf="modules.length === 0" class="text-center py-5">
+      <i class="fas fa-folder-open fa-4x text-muted mb-4"></i>
+      <h4>No hay módulos disponibles</h4>
+      <p class="text-muted">Por el momento no hay módulos para mostrar.</p>
+    </div>
+
+    <div class="row" *ngIf="modules.length > 0">
+      <div class="col-md-6 col-lg-4 mb-4" *ngFor="let module of sortedModules">
+        <div 
+          class="card h-100 shadow-sm hover-shadow"
+          [class.border-success]="module.status === 'completed'"
+          [class.border-warning]="module.status === 'in_progress'">
+          
+          <div 
+            class="card-header text-white d-flex align-items-center justify-content-between"
+            [class.bg-success]="module.status === 'completed'"
+            [class.bg-warning]="module.status === 'in_progress'"
+            [class.bg-secondary]="module.status === 'not_started'">
+            <div class="d-flex align-items-center">
+              <i [class]="'fas fa-' + (module.moduleIcon || 'folder') + ' fa-2x me-2'"></i>
+              <div>
+                <h6 class="mb-0">{{ module.moduleName }}</h6>
+                <small class="opacity-75">{{ module.totalCourses }} cursos</small>
+              </div>
+            </div>
+            <i [class]="getStatusIcon(module.status) + ' fa-lg'"></i>
+          </div>
+
+          <div class="card-body d-flex flex-column">
+            <p class="card-text text-muted small mb-3" *ngIf="module.moduleDescription">
+              {{ module.moduleDescription }}
+            </p>
+
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small fw-bold">Progreso</span>
+                <span 
+                  class="badge"
+                  [class.bg-success]="module.status === 'completed'"
+                  [class.bg-warning]="module.status === 'in_progress'"
+                  [class.bg-secondary]="module.status === 'not_started'">
+                  {{ module.progressPercentage }}%
+                </span>
+              </div>
+              
+              <div class="progress" style="height: 25px;">
+                <div 
+                  class="progress-bar"
+                  [class.bg-success]="module.status === 'completed'"
+                  [class.bg-warning]="module.status === 'in_progress'"
+                  [class.bg-secondary]="module.status === 'not_started'"
+                  role="progressbar" 
+                  [style.width.%]="module.progressPercentage"
+                  [attr.aria-valuenow]="module.progressPercentage" 
+                  aria-valuemin="0" 
+                  aria-valuemax="100">
+                  <strong>{{ module.progressPercentage }}%</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="d-flex justify-content-between text-muted small mb-1">
+                <span>
+                  <i class="fas fa-check-circle text-success me-1"></i>
+                  Completados: {{ module.completedCourses }}
+                </span>
+                <span>
+                  <i class="fas fa-clock text-warning me-1"></i>
+                  En progreso: {{ module.inProgressCourses }}
+                </span>
+              </div>
+              <div class="d-flex justify-content-between text-muted small">
+                <span>
+                  <i class="fas fa-book me-1"></i>
+                  Total de cursos: {{ module.totalCourses }}
+                </span>
+              </div>
+            </div>
+
+            <div *ngIf="module.hasBadge" class="alert alert-success mb-3 py-2">
+              <i class="fas fa-trophy me-2"></i>
+              <strong>🏅¡Insignia Oro Desbloqueada!🏅</strong>
+            </div>
+
+            <div class="mb-3">
+              <span 
+                class="badge w-100 py-2"
+                [class.bg-success]="module.status === 'completed'"
+                [class.bg-warning]="module.status === 'in_progress'"
+                [class.bg-secondary]="module.status === 'not_started'">
+                <i [class]="getStatusIcon(module.status) + ' me-2'"></i>
+                {{ getStatusText(module.status) }}
+              </span>
+            </div>
+
+            <div class="mt-auto border-top pt-3">
+              <div *ngIf="module.startedAt" class="small text-muted mb-1">
+                <i class="fas fa-play-circle me-1"></i>
+                Iniciado: {{ module.startedAt | date:'mediumDate' }}
+              </div>
+              <div *ngIf="module.lastCompletedAt" class="small text-muted mb-2">
+                <i class="fas fa-calendar-check me-1"></i>
+                Último completado: {{ module.lastCompletedAt | date:'mediumDate' }}
+              </div>
+
+              <div class="d-flex gap-2 mt-3">
+                <button 
+                  class="btn btn-sm flex-fill"
+                  [class.btn-outline-success]="module.status === 'completed'"
+                  [class.btn-outline-warning]="module.status === 'in_progress'"
+                  [class.btn-outline-primary]="module.status === 'not_started'"
+                  [routerLink]="['/courses']"
+                  [queryParams]="{module: module.moduleId}">  
+                  <i class="fas fa-eye me-1"></i>
+                 Ver Cursos
+</button>
+                
+                <button 
+                  *ngIf="module.status === 'in_progress' || module.status === 'not_started'"
+                  class="btn btn-sm btn-primary flex-fill"
+                  [routerLink]="['/courses']"
+                [queryParams]="{module: module.moduleId}">  
+
+                  <i class="fas fa-play me-1"></i>
+                  Continuar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="modules.length > 0" class="alert alert-info mt-4" role="alert">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-lightbulb fa-2x me-3"></i>
+        <div>
+          <h5 class="alert-heading mb-1">¡Sigue aprendiendo!</h5>
+          <p class="mb-0">
+            <span *ngIf="stats.completed === stats.total">
+              ¡Felicitaciones! Has completado todos los módulos disponibles. 🎉
+            </span>
+            <span *ngIf="stats.completed < stats.total && stats.inProgress > 0">
+              Tienes {{ stats.inProgress }} módulo{{ stats.inProgress !== 1 ? 's' : '' }} en progreso. 
+              ¡Continúa tu aprendizaje!
+            </span>
+            <span *ngIf="stats.completed < stats.total && stats.inProgress === 0 && stats.notStarted > 0">
+              Hay {{ stats.notStarted }} módulo{{ stats.notStarted !== 1 ? 's' : '' }} esperando por ti. 
+              ¡Comienza uno nuevo hoy!
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

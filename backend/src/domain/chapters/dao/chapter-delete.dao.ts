@@ -13,9 +13,7 @@ export class ChapterDeleteDao {
   ) {}
 
 
-  /**
-   * Eliminar un capítulo permanentemente
-   */
+
   async delete(id: number): Promise<boolean> {
     try {
       const result = await this.chapterRepository.delete(id);
@@ -23,7 +21,6 @@ export class ChapterDeleteDao {
     } catch (error) {
       this.logger.error(`Error al eliminar capítulo en BD: ${error.message}`, error.stack);
       
-      // Si hay contenidos asociados, no se puede eliminar
       if (error.code === '23503') {
         throw new HttpException(
           'No se puede eliminar el capítulo porque tiene contenidos asociados',
@@ -38,9 +35,7 @@ export class ChapterDeleteDao {
     }
   }
 
-  /**
-   * Soft delete (cambiar a ARCHIVED)
-   */
+
   async softDelete(id: number): Promise<Chapter | null> {
     try {
       await this.chapterRepository.update(id, { stateId: 3 }); // 3 = ARCHIVED

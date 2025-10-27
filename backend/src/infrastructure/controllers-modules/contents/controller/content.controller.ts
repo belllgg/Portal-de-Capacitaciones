@@ -22,10 +22,7 @@ export class ContentsController {
 
   ) {}
 
-   /**
-   * POST /api/contents
-   * Crear un nuevo contenido (solo ADMIN)
-   */
+ 
 
     @Post('create')
 @HttpCode(HttpStatus.CREATED)
@@ -75,10 +72,6 @@ export class ContentsController {
     return await this.ContentCreateService.create(createContentDto);
   }
 
-  /**
-   * POST /api/contents/auto-ordered
-   * Crear un contenido con orden automático al final (solo ADMIN)
-   */
  @Post('create/auto-ordered')
 @HttpCode(HttpStatus.CREATED)
 async createAutoOrdered(
@@ -93,75 +86,46 @@ async createAutoOrdered(
   );
 }
 
-  /**
-   * GET /api/contents/types
-   * Obtener todos los tipos de contenido disponibles
-   */
+
   @Get('types')
   @HttpCode(HttpStatus.OK)
   async findAllContentTypes() {
     return await this.contentConsultService.findAllContentTypes();
   }
 
-  /**
-   * GET /api/contents/chapter/:chapterId
-   * Obtener todos los contenidos de un capítulo
-   */
+
   @Get('chapter/:chapterId')
   @HttpCode(HttpStatus.OK)
   async findByChapterId(@Param('chapterId', ParseIntPipe) chapterId: number) {
     return await this.contentConsultService.findByChapterId(chapterId);
   }
 
-  /**
-   * GET /api/contents/chapter/:chapterId/stats
-   * Obtener estadísticas de contenidos de un capítulo
-   */
   @Get('chapter/:chapterId/stats')
   @HttpCode(HttpStatus.OK)
   async getChapterContentStats(@Param('chapterId', ParseIntPipe) chapterId: number) {
     return await this.contentConsultService.getChapterContentStats(chapterId);
   }
 
-  /**
-   * GET /api/contents/course/:courseId/stats
-   * Obtener estadísticas de contenidos de un curso completo
-   */
   @Get('course/:courseId/stats')
   @HttpCode(HttpStatus.OK)
   async getCourseContentStats(@Param('courseId', ParseIntPipe) courseId: number) {
     return await this.contentConsultService.getCourseContentStats(courseId);
   }
 
-  /**
-   * GET /api/contents/type/:contentTypeId
-   * Obtener contenidos por tipo
-   */
+
   @Get('type/:contentTypeId')
   @HttpCode(HttpStatus.OK)
   async findByContentTypeId(@Param('contentTypeId', ParseIntPipe) contentTypeId: number) {
     return await this.contentConsultService.findByContentTypeId(contentTypeId);
   }
 
-  /**
-   * GET /api/contents/:id
-   * Obtener un contenido por ID
-   */
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findById(@Param('id', ParseIntPipe) id: number) {
     return await this.contentConsultService.findById(id);
   }
 
- 
-
-  /**
-   * PUT /api/contents/:id
-   * Actualizar un contenido (solo ADMIN)
-   */
   @Put(':id')
-  // @UseGuards(RolesGuard)
-  // @Roles('ADMIN')
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -170,13 +134,8 @@ async createAutoOrdered(
     return await this.ContentUpdateService.update(id, updateContentDto);
   }
 
-  /**
-   * PATCH /api/contents/chapter/:chapterId/reorder
-   * Reordenar contenidos de un capítulo (solo ADMIN)
-   */
   @Patch('chapter/:chapterId/reorder')
-  // @UseGuards(RolesGuard)
-  // @Roles('ADMIN')
+ 
   @HttpCode(HttpStatus.OK)
   async reorder(
     @Param('chapterId', ParseIntPipe) chapterId: number,
@@ -185,25 +144,14 @@ async createAutoOrdered(
     return await this.ContentUpdateService.reorder(chapterId, reorderDto);
   }
 
-  /**
-   * DELETE /api/contents/:id
-   * Eliminar un contenido permanentemente (solo ADMIN)
-   */
   @Delete(':id')
-  // @UseGuards(RolesGuard)
-  // @Roles('ADMIN')
+
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id', ParseIntPipe) id: number) {
     return await this.ContentDeleteService.delete(id);
   }
 
-  /**
-   * DELETE /api/contents/chapter/:chapterId/all
-   * Eliminar todos los contenidos de un capítulo (solo ADMIN)
-   */
   @Delete('chapter/:chapterId/all')
-  // @UseGuards(RolesGuard)
-  // @Roles('ADMIN')
   @HttpCode(HttpStatus.OK)
   async deleteByChapterId(@Param('chapterId', ParseIntPipe) chapterId: number) {
     return await this.ContentDeleteService.deleteByChapterId(chapterId);

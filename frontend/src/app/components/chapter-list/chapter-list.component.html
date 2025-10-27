@@ -1,7 +1,7 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Administración de Capítulos</h2>
-    <button 
+    <button *ngIf="authService.canCreateContent()"
       class="btn btn-primary" 
       (click)="createChapter()"
       [disabled]="!selectedCourseId">
@@ -9,7 +9,6 @@
     </button>
   </div>
 
-  <!-- Selector de Curso -->
   <div class="card mb-4">
     <div class="card-body">
       <div class="row">
@@ -40,19 +39,16 @@
     </div>
   </div>
 
-  <!-- Loading -->
   <div *ngIf="loading" class="text-center">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Cargando...</span>
     </div>
   </div>
 
-  <!-- Error -->
   <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
     {{ error }}
   </div>
 
-  <!-- Tabla de Capítulos -->
   <div *ngIf="!loading && !error && selectedCourseId" class="card">
     <div class="card-body">
       <div class="table-responsive">
@@ -93,7 +89,6 @@
               </td>
               <td class="text-end">
                 <div class="d-flex justify-content-end align-items-center gap-2">
-                  <!-- Botones de orden -->
                   <div class="btn-group btn-group-sm">
                     <button 
                       class="btn btn-outline-secondary"
@@ -111,7 +106,6 @@
                     </button>
                   </div>
 
-                  <!-- Botón de completar/descompletar - toggle directo -->
                   <button 
                     class="btn btn-sm"
                     [ngClass]="isChapterCompleted(chapter.id) ? 'btn-success' : 'btn-danger'"
@@ -121,18 +115,23 @@
                     {{ isChapterCompleted(chapter.id) ? 'Completado' : 'Completar' }}
                   </button>
 
-                  <!-- Separador visual -->
                   <div class="vr"></div>
 
-                  <!-- Botones de gestión -->
                   <div class="btn-group btn-group-sm">
-                    <button 
+     <button 
+    class="btn btn-outline-info"
+    (click)="viewChapterContents(chapter)"
+    title="Ver contenidos del capítulo">
+    <i class="fas fa-eye me-1"></i> Ver Contenidos
+  </button>
+                    <button *ngIf="authService.canEditModules()"
                       class="btn btn-outline-primary"
                       (click)="editChapter(chapter)"
                       title="Editar capítulo">
                       <i class="fas fa-edit me-1"></i> Editar
                     </button>
-                    <button 
+                    <button *ngIf="authService.canDeleteModules()"
+
                       class="btn btn-outline-danger"
                       (click)="deleteChapter(chapter)"
                       title="Eliminar capítulo">

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete,Patch,Body, Param, Query,ParseIntPipe,HttpCode,HttpStatus,UseGuards,Req} from '@nestjs/common';
+import { Controller, Request,Get, Post, Delete,Patch,Body, Param, Query,ParseIntPipe,HttpCode,HttpStatus,UseGuards,Req} from '@nestjs/common';
 import { ProgressConsultService } from '../../../../application/services/progress/progress-consult.service';
 import { ProgressMutationService } from '../../../../application/services/progress/progress-mutation.service';
 import { CompleteChapterDto, StartCourseDto,ChapterProgressDto } from '../../../../domain/progress/dto/progress.dto';
@@ -15,49 +15,31 @@ export class ProgressController {
     private readonly progressMutationService: ProgressMutationService
   ) {}
 
-  // ==========================================
-  // ENDPOINTS DE CONSULTA
-  // ==========================================
-
-  /**
-   * GET /api/progress/me
-   * Obtener resumen completo de progreso del usuario autenticado
-   */
   @Get('me')
   @HttpCode(HttpStatus.OK)
   async getMyProgress(
-    // @Req() req: any // Descomentar cuando tengas auth
   ) {
-    const userId = 1; // TODO: Obtener de req.user.id cuando tengas auth
+    const userId = 1; 
     return await this.progressConsultService.getUserProgressSummary(userId);
   }
 
-  /**
-   * GET /api/progress/me/dashboard
-   * Obtener estadísticas para el dashboard del usuario
-   */
+
   @Get('me/dashboard')
   @HttpCode(HttpStatus.OK)
   async getMyDashboard() {
-    const userId = 1; // TODO: Obtener de req.user.id
+    const userId = 1; 
     return await this.progressConsultService.getDashboardStats(userId);
   }
 
-  /**
-   * GET /api/progress/me/courses/in-progress
-   * Obtener cursos en progreso del usuario
-   */
+
   @Get('me/courses/in-progress')
   @HttpCode(HttpStatus.OK)
   async getMyCoursesInProgress() {
-    const userId = 1; // TODO: Obtener de req.user.id
+    const userId = 1; 
     return await this.progressConsultService.getCoursesInProgress(userId);
   }
 
-  /**
-   * GET /api/progress/me/courses/completed
-   * Obtener historial de cursos completados
-   */
+
 @Get('me/courses/completed/:userId')
 @HttpCode(HttpStatus.OK)
 async getMyCoursesCompleted(
@@ -67,34 +49,26 @@ async getMyCoursesCompleted(
 }
 
 
-  /**
-   * GET /api/progress/me/course/:courseId
-   * Obtener progreso detallado de un curso específico
-   */
-  @Get('me/course/:courseId')
-  @HttpCode(HttpStatus.OK)
-  async getMyCourseProgress(@Param('courseId', ParseIntPipe) courseId: number) {
-    const userId = 1; // TODO: Obtener de req.user.id
-    return await this.progressConsultService.getCourseProgressDetail(userId, courseId);
-  }
+ @Get('me/course/:courseId')
+@HttpCode(HttpStatus.OK)
+async getMyCourseProgress(
+  @Param('courseId', ParseIntPipe) courseId: number,
+  @Req() req: any  
+) {
+  const userId = req.user.id;
+  return await this.progressConsultService.getCourseProgressDetail(userId, courseId);
+}
 
-  /**
-   * GET /api/progress/user/:userId
-   * Obtener progreso de un usuario específico (solo ADMIN)
-   */
+
   @Get('user/:userId')
   @HttpCode(HttpStatus.OK)
   async getUserProgress(@Param('userId', ParseIntPipe) userId: number) {
     return await this.progressConsultService.getUserProgressSummary(userId);
   }
 
-  /**
-   * GET /api/progress/user/:userId/course/:courseId
-   * Obtener progreso de un usuario en un curso (solo ADMIN)
-   */
+
   @Get('user/:userId/course/:courseId')
-  // @UseGuards(RolesGuard)
-  // @Roles('ADMIN')
+
   @HttpCode(HttpStatus.OK)
   async getUserCourseProgress(
     @Param('userId', ParseIntPipe) userId: number,
@@ -103,64 +77,48 @@ async getMyCoursesCompleted(
     return await this.progressConsultService.getCourseProgressDetail(userId, courseId);
   }
 
-  /**
-   * GET /api/progress/course/:courseId/analytics
-   * Obtener analytics de un curso (solo ADMIN)
-   */
+
   @Get('course/:courseId/analytics')
-  // @UseGuards(RolesGuard)
-  // @Roles('ADMIN')
+
   @HttpCode(HttpStatus.OK)
   async getCourseAnalytics(@Param('courseId', ParseIntPipe) courseId: number) {
     return await this.progressConsultService.getCourseAnalytics(courseId);
   }
 
-  /**
-   * GET /api/progress/ranking
-   * Obtener ranking de usuarios (solo ADMIN)
-   */
+
   @Get('ranking')
-  // @UseGuards(RolesGuard)
-  // @Roles('ADMIN')
+
   @HttpCode(HttpStatus.OK)
   async getUserRanking(@Query('limit', ParseIntPipe) limit: number = 10) {
     return await this.progressConsultService.getUserRanking(limit);
   }
 
-  // ==========================================
-  // ENDPOINTS DE MUTACIÓN
-  // ==========================================
-
-  /**
-   * POST /api/progress/start-course
-   * Iniciar un curso
-   */
   @Post('start-course')
-  @HttpCode(HttpStatus.CREATED)
-  @ApiBody({
-    type: StartCourseDto,
-    examples: {
-      ejemplo1: {
-        summary: 'Iniciar curso',
-        value: {
-          courseId: 1,
-      },
+@HttpCode(HttpStatus.CREATED)
+@ApiBody({
+  type: StartCourseDto,
+  examples: {
+    ejemplo1: {
+      summary: 'Iniciar curso',
+      value: {
+        courseId: 1,
+        userId: 1,
       },
     },
-  })
-  @ApiResponse({ status: 201, description: 'Curso iniciado exitosamente', type: ChapterProgressDto })
-  @ApiResponse({ status: 400, description: 'Datos inválidos' })
-  @ApiResponse({ status: 401, description: 'No autorizado' }) 
-  @ApiResponse({ status: 500, description: 'Error interno del servidor' })  @HttpCode(HttpStatus.CREATED)
-  async startCourse(@Body() startCourseDto: StartCourseDto) {
-    const userId = 2; 
-    return await this.progressMutationService.startCourse(userId, startCourseDto.courseId);
-  }
+  },
+})
+@ApiResponse({ status: 201, description: 'Curso iniciado exitosamente', type: ChapterProgressDto })
+@ApiResponse({ status: 400, description: 'Datos inválidos' })
+@ApiResponse({ status: 401, description: 'No autorizado' })
+@ApiResponse({ status: 500, description: 'Error interno del servidor' })
+async startCourse(@Body() startCourseDto: StartCourseDto) {
+  return await this.progressMutationService.startCourse(
+    startCourseDto.userId,
+    startCourseDto.courseId
+  );
+}
 
-  /**
-   * POST /api/progress/complete-chapter
-   * Marcar un capítulo como completado
-   */
+
   @Post('complete-chapter')
   @HttpCode(HttpStatus.OK)
   @ApiBody({
@@ -170,6 +128,8 @@ async getMyCoursesCompleted(
           summary: 'Marcar capitulo como completado',
           value: {
             chapterId: 1,
+            userId: 1,
+
         },
         },
       },
@@ -179,14 +139,11 @@ async getMyCoursesCompleted(
     @ApiResponse({ status: 401, description: 'No autorizado' }) 
     @ApiResponse({ status: 500, description: 'Error interno del servidor' })  @HttpCode(HttpStatus.CREATED)
   async completeChapter(@Body() completeChapterDto: CompleteChapterDto) {
-    const userId = 2; 
-    return await this.progressMutationService.completeChapter(userId, completeChapterDto.chapterId);
+    return await this.progressMutationService.completeChapter(
+     completeChapterDto.userId, 
+      completeChapterDto.chapterId);
   }
 
-  /**
-   * PATCH /api/progress/uncomplete-chapter/:chapterId
-   * Desmarcar un capítulo como completado
-   */
 @Patch('uncomplete-chapter/:chapterId')
 @HttpCode(HttpStatus.OK)
 @ApiBody({
@@ -202,19 +159,37 @@ async getMyCoursesCompleted(
 })
 async uncompleteChapter(
   @Param('chapterId', ParseIntPipe) chapterId: number,
-  @Body('userId', ParseIntPipe) userId: number  // ← Recibe del body
+  @Body('userId', ParseIntPipe) userId: number  
 ) {
   return await this.progressMutationService.uncompleteChapter(userId, chapterId);
 }
 
-  /**
-   * DELETE /api/progress/course/:courseId/reset
-   * Reiniciar progreso de un curso
-   */
+
   @Delete('course/:courseId/reset')
   @HttpCode(HttpStatus.OK)
   async resetCourseProgress(@Param('courseId', ParseIntPipe) courseId: number) {
     const userId = 1; 
     return await this.progressMutationService.resetCourseProgress(userId, courseId);
+ 
   }
+
+  @Get('me/modules/completed/:userId')
+@HttpCode(HttpStatus.OK)
+@ApiOperation({ summary: 'Obtener módulos completados' })
+@ApiResponse({ status: 200, description: 'Módulos completados obtenidos exitosamente' })
+async getMyModulesCompleted(
+  @Param('userId', ParseIntPipe) userId: number
+) {
+  return await this.progressConsultService.getModulesCompleted(userId);
+}
+
+@Get('me/modules/progress/:userId')
+@HttpCode(HttpStatus.OK)
+@ApiOperation({ summary: 'Obtener progreso de todos los módulos' })
+@ApiResponse({ status: 200, description: 'Progreso de módulos obtenido exitosamente' })
+async getMyModulesProgress(
+  @Param('userId', ParseIntPipe) userId: number
+) {
+  return await this.progressConsultService.getModuleProgress(userId);
+}
 }

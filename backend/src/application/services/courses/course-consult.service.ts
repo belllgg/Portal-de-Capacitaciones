@@ -11,9 +11,7 @@ export class CourseConsultService {
     private readonly courseConsultDao: CourseConsultDao
   ) {}
 
-  /**
-   * Obtener todos los cursos
-   */
+ 
   async findAll(): Promise<{ 
     success: boolean; 
     message: string; 
@@ -33,9 +31,7 @@ export class CourseConsultService {
     }
   }
 
-  /**
-   * Obtener solo cursos activos
-   */
+ 
   async findActiveOnly(): Promise<{ 
     success: boolean; 
     message: string; 
@@ -55,9 +51,7 @@ export class CourseConsultService {
     }
   }
 
-  /**
-   * Obtener un curso por ID
-   */
+ 
   async findById(id: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -84,9 +78,6 @@ export class CourseConsultService {
     }
   }
 
-  /**
-   * Obtener cursos por módulo
-   */
   async findByModuleId(moduleId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -106,9 +97,7 @@ export class CourseConsultService {
     }
   }
 
-  /**
-   * Obtener cursos ACTIVOS por módulo
-   */
+ 
   async findActiveByModuleId(moduleId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -128,9 +117,7 @@ export class CourseConsultService {
     }
   }
 
-  /**
-   * Obtener cursos por estado
-   */
+
   async findByStateId(stateId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -150,9 +137,6 @@ export class CourseConsultService {
     }
   }
 
-  /**
-   * Buscar cursos por texto
-   */
   async searchByText(searchText: string): Promise<{ 
     success: boolean; 
     message: string; 
@@ -172,9 +156,7 @@ export class CourseConsultService {
     }
   }
 
-  /**
-   * Obtener cursos creados por un usuario
-   */
+ 
   async findByCreatorId(creatorId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -194,9 +176,6 @@ export class CourseConsultService {
     }
   }
 
-  /**
-   * Mapear a DTO de respuesta completo
-   */
   private mapToResponseDto(course: Course): CourseResponseDto {
     return {
       id: course.id,
@@ -225,9 +204,7 @@ export class CourseConsultService {
     };
   }
 
-  /**
-   * Mapear a DTO de listado
-   */
+
   private mapToListItemDto(course: Course): CourseListItemDto {
     return {
       id: course.id,

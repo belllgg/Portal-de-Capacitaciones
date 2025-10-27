@@ -14,9 +14,7 @@ export class ContentUpdateService {
   ) {}
 
 
-  /**
-   * Actualizar un contenido existente
-   */
+
   async update(
     id: number, 
     updateContentDto: UpdateContentDto
@@ -26,7 +24,6 @@ export class ContentUpdateService {
     data?: ContentResponseDto 
   }> {
     try {
-      // Verificar que el contenido existe
       const content = await this.contentConsultDao.findById(id);
       
       if (!content) {
@@ -36,12 +33,11 @@ export class ContentUpdateService {
         };
       }
 
-      // Si se está cambiando el order_index, validar que no esté duplicado
       if (updateContentDto.orderIndex !== undefined) {
         const orderExists = await this.contentConsultDao.existsByOrderIndex(
           content.chapterId,
           updateContentDto.orderIndex,
-          id // Excluir el contenido actual
+          id 
         );
         
         if (orderExists) {
@@ -52,7 +48,6 @@ export class ContentUpdateService {
         }
       }
 
-      // Actualizar el contenido
       const updatedContent = await this.ContentUpdateDao.update(id, updateContentDto);
 
       if (!updatedContent) {
@@ -73,9 +68,7 @@ export class ContentUpdateService {
     }
   }
 
-  /**
-   * Reordenar contenidos de un capítulo
-   */
+
   async reorder(
     chapterId: number,
     reorderDto: ReorderContentsDto
@@ -84,7 +77,6 @@ export class ContentUpdateService {
     message: string 
   }> {
     try {
-      // Validar que todos los IDs pertenecen al capítulo
       const contents = await this.contentConsultDao.findByChapterId(chapterId);
       const contentIds = contents.map(c => c.id);
       
@@ -97,13 +89,11 @@ export class ContentUpdateService {
         );
       }
 
-      // Crear array de actualizaciones
       const updates = reorderDto.contentIds.map((id, index) => ({
         id,
-        orderIndex: index + 1 // Orden comienza en 1
+        orderIndex: index + 1 
       }));
 
-      // Actualizar todos los order_index
       await this.ContentUpdateDao.updateOrderIndexes(updates);
 
       return {
@@ -116,9 +106,6 @@ export class ContentUpdateService {
     }
   }
 
-  /**
-   * Mapear a DTO de respuesta
-   */
   private mapToResponseDto(content: ChapterContent): ContentResponseDto {
     return {
       id: content.id,

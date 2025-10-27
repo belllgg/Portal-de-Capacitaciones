@@ -12,7 +12,6 @@
 
           <form [formGroup]="contentForm" (ngSubmit)="onSubmit()">
             <div class="row">
-              <!-- Curso -->
               <div class="col-md-6 mb-3">
                 <label for="courseId" class="form-label">Curso *</label>
                 <select
@@ -31,7 +30,6 @@
                 </div>
               </div>
 
-              <!-- Capítulo -->
               <div class="col-md-6 mb-3">
                 <label for="chapterId" class="form-label">Capítulo *</label>
                 <select
@@ -55,7 +53,6 @@
             </div>
 
             <div class="row">
-              <!-- Tipo de Contenido -->
               <div class="col-md-6 mb-3">
                 <label for="contentTypeId" class="form-label">Tipo de Contenido *</label>
                 <select
@@ -79,7 +76,6 @@
                 </div>
               </div>
 
-              <!-- Título -->
               <div class="col-md-6 mb-3">
                 <label for="title" class="form-label">Título (Opcional)</label>
                 <input
@@ -95,7 +91,6 @@
               </div>
             </div>
 
-            <!-- URL del Archivo -->
             <div class="mb-3">
               <label for="fileUrl" class="form-label">URL del Archivo *</label>
               <input
@@ -117,7 +112,6 @@
             </div>
 
             <div class="row">
-              <!-- Tamaño del Archivo -->
               <div class="col-md-6 mb-3">
                 <label for="fileSizeMb" class="form-label">Tamaño (MB) (Opcional)</label>
                 <input
@@ -134,7 +128,6 @@
                 </div>
               </div>
 
-              <!-- Orden -->
               <div class="col-md-6 mb-3">
                 <label for="orderIndex" class="form-label">Orden *</label>
                 <input
@@ -154,7 +147,6 @@
               </div>
             </div>
 
-            <!-- Botones -->
             <div class="d-flex gap-2 mt-4">
               <button
                 type="submit"

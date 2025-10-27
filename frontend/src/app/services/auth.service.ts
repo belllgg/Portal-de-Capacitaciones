@@ -40,7 +40,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(credentials: LoginDto): Observable<LoginResponse> {
-    console.log('🔍 Enviando login a:', `${this.apiUrl}/users/login`);
+    console.log('Enviando login a:', `${this.apiUrl}/users/login`);
     
     const headers = new HttpHeaders({
       'accept': 'application/json',
@@ -53,14 +53,14 @@ export class AuthService {
       { headers }
     ).pipe(
       tap((response) => {
-        console.log('✅ Login exitoso:', response);
+        console.log('Login exitoso:', response);
         if (response.success && response.data.access_token) {
           localStorage.setItem('token', response.data.access_token);
           localStorage.setItem('user', JSON.stringify(response.data.user));
         }
       }),
       catchError((error) => {
-        console.error('❌ Error en login:', error);
+        console.error('Error en login:', error);
         throw error;
       })
     );
@@ -90,7 +90,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    console.log('✅ Logout realizado');
+    console.log('Logout realizado');
   }
 
   isLoggedIn(): boolean {
@@ -121,18 +121,17 @@ export class AuthService {
   }
 
   canAccessUsers(): boolean {
-    return this.isAdmin(); // Solo admin puede acceder a usuarios
+    return this.isAdmin(); 
   }
 
   canEditModules(): boolean {
-    return this.isAdmin(); // Solo admin puede editar módulos
+    return this.isAdmin(); 
   }
 
   canDeleteModules(): boolean {
-    return this.isAdmin(); // Solo admin puede eliminar módulos
-  }
+    return this.isAdmin(); }
 
   canCreateContent(): boolean {
-    return this.isAdmin() || this.isCollaborator(); // Ambos pueden crear contenido
+    return this.isAdmin(); 
   }
 }

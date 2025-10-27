@@ -37,7 +37,6 @@ export class ChapterContent {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  // Relations
   @ManyToOne(() => Chapter, { eager: false })
   @JoinColumn({ name: 'chapter_id' })
   chapter: Chapter;

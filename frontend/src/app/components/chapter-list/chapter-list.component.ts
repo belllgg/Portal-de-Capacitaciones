@@ -5,8 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { ChapterService, Chapter } from '../../services/chapter.service';
 import { CourseService, Course } from '../../services/course.service';
 import { ProgressService, ChapterProgress } from '../../services/progress.service';
+import { AuthService } from '../../services/auth.service';
 
-// Importar Bootstrap para el modal
 declare var bootstrap: any;
 
 @Component({
@@ -22,17 +22,13 @@ export class ChapterListComponent implements OnInit {
   loading = false;
   error = '';
   
-  // Filtro por curso
   selectedCourseId: number | null = null;
   selectedCourseName = '';
   
-  // Variable para el modal de completar
   chapterToComplete: Chapter | null = null;
   
-  // Set de IDs de capítulos completados
   completedChapterIds: Set<number> = new Set();
   
-  // Estados disponibles
   states = [
     { id: 1, name: 'DRAFT', class: 'bg-warning' },      // Borrador
     { id: 2, name: 'PUBLISHED', class: 'bg-success' },  // Publicado
@@ -44,13 +40,13 @@ export class ChapterListComponent implements OnInit {
     private courseService: CourseService,
     private ProgressService: ProgressService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public authService: AuthService,
   ) {}
 
   ngOnInit(): void {
     this.loadCourses();
     
-    // Verificar si viene un courseId por parámetro
     this.route.queryParams.subscribe(params => {
       if (params['courseId']) {
         this.selectedCourseId = +params['courseId'];
@@ -91,14 +87,11 @@ export class ChapterListComponent implements OnInit {
     });
   }
 
-  // Cargar progreso del usuario para el curso actual
   loadUserProgress(courseId: number): void {
     this.ProgressService.getMyCourseProgress(courseId).subscribe({
       next: (progress) => {
-        // Limpiar el Set antes de llenarlo
         this.completedChapterIds.clear();
         
-        // Si hay capítulos en el progreso, agregarlos al Set
         if (progress.chapters && progress.chapters.length > 0) {
           progress.chapters.forEach((chapter: ChapterProgress) => {
             if (chapter.isCompleted) {
@@ -111,7 +104,6 @@ export class ChapterListComponent implements OnInit {
       },
       error: (error) => {
         console.log('No se encontró progreso previo:', error);
-        // No mostramos error porque puede que el usuario no haya iniciado el curso
       }
     });
   }
@@ -121,7 +113,6 @@ export class ChapterListComponent implements OnInit {
       this.loadChaptersByCourse(this.selectedCourseId);
       this.loadUserProgress(this.selectedCourseId);
       
-      // Actualizar URL sin recargar
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: { courseId: this.selectedCourseId },
@@ -139,7 +130,6 @@ export class ChapterListComponent implements OnInit {
     return state ? state.class : 'bg-secondary';
   }
 
-  // Verificar si un capítulo está completado
   isChapterCompleted(chapterId: number): boolean {
     return this.completedChapterIds.has(chapterId);
   }
@@ -222,13 +212,18 @@ export class ChapterListComponent implements OnInit {
       });
     }
   }
-
-// Método simplificado: toggle directo sin modal
+viewChapterContents(chapter: Chapter): void {
+  this.router.navigate(['/contents'], {
+    queryParams: {
+      courseId: this.selectedCourseId,
+      chapterId: chapter.id
+    }
+  });
+}
 toggleChapterComplete(chapter: Chapter): void {
   const isCompleted = this.isChapterCompleted(chapter.id);
   
   if (isCompleted) {
-    // Si está completado, desmarcar
     this.ProgressService.uncompleteChapter(chapter.id).subscribe({
       next: (response) => {
         console.log('Capítulo desmarcado:', response);
@@ -240,7 +235,6 @@ toggleChapterComplete(chapter: Chapter): void {
       }
     });
   } else {
-    // Si no está completado, marcar
     this.ProgressService.completeChapter(chapter.id).subscribe({
       next: (response) => {
         console.log('Capítulo completado:', response);
@@ -253,7 +247,5 @@ toggleChapterComplete(chapter: Chapter): void {
     });
   }
 }
- 
-
 
 }

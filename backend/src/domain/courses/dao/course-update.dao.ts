@@ -13,9 +13,7 @@ export class CourseUpdateDao {
     private readonly courseRepository: Repository<Course>,
   ) {}
 
-  /**
-   * Actualizar un curso existente
-   */
+ 
   async update(id: number, updateCourseDto: UpdateCourseDto): Promise<Course | null> {
     try {
       const result = await this.courseRepository.update(id, updateCourseDto);
@@ -31,7 +29,6 @@ export class CourseUpdateDao {
     } catch (error) {
       this.logger.error(`Error al actualizar curso en BD: ${error.message}`, error.stack);
       
-      // Manejo de errores de foreign key
       if (error.code === '23503') {
         throw new HttpException(
           'El módulo o estado especificado no existe',
@@ -46,10 +43,7 @@ export class CourseUpdateDao {
     }
   }
 
-  
-  /**
-   * Cambiar el estado de un curso
-   */
+
   async changeState(id: number, stateId: number): Promise<Course | null> {
     try {
       await this.courseRepository.update(id, { stateId });

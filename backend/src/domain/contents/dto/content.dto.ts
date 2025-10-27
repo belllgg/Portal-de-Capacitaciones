@@ -61,7 +61,6 @@ export class UpdateContentDto {
   contentTypeId?: number;
 }
 
-// DTO para subir archivo (usaremos multipart/form-data)
 export class UploadContentDto {
   @IsInt()
   @IsNotEmpty()
@@ -81,10 +80,9 @@ export class UploadContentDto {
   orderIndex?: number;
 }
 
-// DTO para reordenar contenidos
 export class ReorderContentsDto {
   @IsNotEmpty({ message: 'El array de IDs es obligatorio' })
-  contentIds: number[]; // Array de IDs en el nuevo orden
+  contentIds: number[]; 
 }
 
 // ============================================
@@ -116,7 +114,7 @@ export class ContentListItemDto {
   fileSizeMb: number;
   orderIndex: number;
   contentTypeName: string;
-  contentTypeIcon?: string; // Emoji o icono para el tipo
+  contentTypeIcon?: string; 
 }
 
 export class ContentSimpleDto {
@@ -126,7 +124,6 @@ export class ContentSimpleDto {
   contentTypeName: string;
 }
 
-// DTO para estadísticas de contenido
 export class ContentStatsDto {
   totalContents: number;
   videoCount: number;

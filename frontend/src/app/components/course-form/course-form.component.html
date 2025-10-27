@@ -12,7 +12,6 @@
 
           <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
             <div class="row">
-              <!-- Título -->
               <div class="col-md-8 mb-3">
                 <label for="title" class="form-label">Título del Curso *</label>
                 <input
@@ -30,7 +29,6 @@
                 </div>
               </div>
 
-              <!-- Estado -->
               <div class="col-md-4 mb-3">
                 <label for="stateId" class="form-label">Estado</label>
                 <select
@@ -44,7 +42,6 @@
               </div>
             </div>
 
-            <!-- Descripción -->
             <div class="mb-3">
               <label for="description" class="form-label">Descripción</label>
               <textarea
@@ -56,7 +53,6 @@
             </div>
 
             <div class="row">
-              <!-- Módulo -->
               <div class="col-md-6 mb-3">
                 <label for="moduleId" class="form-label">Módulo *</label>
                 <select
@@ -74,7 +70,6 @@
                 </div>
               </div>
 
-              <!-- Instructor -->
               <div class="col-md-6 mb-3">
                 <label for="instructorName" class="form-label">Instructor</label>
                 <input
@@ -91,7 +86,6 @@
             </div>
 
             <div class="row">
-              <!-- URL de Miniatura -->
               <div class="col-md-8 mb-3">
                 <label for="thumbnailUrl" class="form-label">URL de Miniatura</label>
                 <input
@@ -105,7 +99,6 @@
                 </small>
               </div>
 
-              <!-- Duración -->
               <div class="col-md-4 mb-3">
                 <label for="durationHours" class="form-label">Duración (horas)</label>
                 <input
@@ -123,7 +116,6 @@
               </div>
             </div>
 
-            <!-- Vista previa de miniatura -->
             <div class="mb-3" *ngIf="courseForm.get('thumbnailUrl')?.value">
               <label class="form-label">Vista previa de miniatura</label>
               <div class="card" style="max-width: 300px;">
@@ -135,7 +127,6 @@
 >              </div>
             </div>
 
-            <!-- Botones -->
             <div class="d-flex gap-2 mt-4">
               <button
                 type="submit"

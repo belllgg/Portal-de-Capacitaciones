@@ -15,16 +15,13 @@ export class ContentCreateService {
     private readonly chapterConsultDao: ChapterConsultDao
   ) {}
 
-  /**
-   * Crear un nuevo contenido
-   */
+  
   async create(createContentDto: CreateContentDto): Promise<{ 
     success: boolean; 
     message: string; 
     data?: ContentResponseDto 
   }> {
     try {
-      // Validar que el capítulo existe
       const chapterExists = await this.chapterConsultDao.existsById(createContentDto.chapterId);
       
       if (!chapterExists) {
@@ -34,7 +31,6 @@ export class ContentCreateService {
         );
       }
 
-      // Validar que el order_index no esté duplicado
       const orderExists = await this.contentConsultDao.existsByOrderIndex(
         createContentDto.chapterId, 
         createContentDto.orderIndex
@@ -47,7 +43,6 @@ export class ContentCreateService {
         );
       }
 
-      // Crear el contenido
       const content = await this.ContentCreateDao.create(createContentDto);
 
       return {
@@ -61,9 +56,7 @@ this.logger.error(`Error al crear contenido: ${error.message}`, error.stack);
     }
   }
 
-  /**
-   * Crear contenido con order_index automático (al final)
-   */
+
   async createAutoOrdered(
     chapterId: number,
     contentTypeId: number,
@@ -76,7 +69,6 @@ this.logger.error(`Error al crear contenido: ${error.message}`, error.stack);
     data?: ContentResponseDto 
   }> {
     try {
-      // Obtener el último order_index del capítulo
       const lastOrder = await this.contentConsultDao.getLastOrderIndexByChapterId(chapterId);
       
       const createDto: CreateContentDto = {
@@ -94,9 +86,7 @@ this.logger.error(`Error al crear contenido: ${error.message}`, error.stack);
       throw error;
     }
   }
-  /**
-   * Mapear a DTO de respuesta
-   */
+
   private mapToResponseDto(content: ChapterContent): ContentResponseDto {
     return {
       id: content.id,

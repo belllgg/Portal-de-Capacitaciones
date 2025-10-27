@@ -8,12 +8,16 @@ export class CompleteChapterDto {
   @IsInt()
   @IsNotEmpty({ message: 'El ID del capítulo es obligatorio' })
   chapterId: number;
+  @IsInt()
+  userId: number;
 }
 
 export class StartCourseDto {
   @IsInt()
   @IsNotEmpty({ message: 'El ID del curso es obligatorio' })
   courseId: number;
+  @IsInt()
+  userId: number;
 }
 
 // ============================================
@@ -129,4 +133,30 @@ export class UserRankingDto {
   chaptersCompleted: number;
   hoursStudied: number;
   rank: number;
+}
+export class ModuleCompletedDto {
+  moduleId: number;
+  moduleName: string;
+  moduleIcon?: string;
+  moduleDescription?: string;
+  totalCourses: number;
+  completedAt: Date;
+  badgeTypeId?: number;
+  badgeName?: string;
+  badgeIconUrl?: string;
+}
+
+export class ModuleProgressDto {
+  moduleId: number;
+  moduleName: string;
+  moduleDescription?: string;
+  moduleIcon?: string;
+  totalCourses: number;
+  completedCourses: number;
+  inProgressCourses: number;
+  progressPercentage: number;
+  status: 'not_started' | 'in_progress' | 'completed';
+  startedAt?: Date;
+  lastCompletedAt?: Date;
+  hasBadge?: boolean;
 }

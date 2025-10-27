@@ -14,9 +14,7 @@ export class ContentConsultDao {
     private readonly contentTypeRepository: Repository<ContentType>,
   ) {}
 
-  /**
-   * Obtener todos los contenidos de un capítulo
-   */
+
   async findByChapterId(chapterId: number): Promise<ChapterContent[]> {
     try {
       return await this.contentRepository.find({
@@ -33,9 +31,7 @@ export class ContentConsultDao {
     }
   }
 
-  /**
-   * Buscar contenido por ID
-   */
+
   async findById(id: number): Promise<ChapterContent | null> {
     try {
       return await this.contentRepository.findOne({ 
@@ -51,9 +47,6 @@ export class ContentConsultDao {
     }
   }
 
-  /**
-   * Buscar contenidos por tipo
-   */
   async findByContentTypeId(contentTypeId: number): Promise<ChapterContent[]> {
     try {
       return await this.contentRepository.find({
@@ -70,9 +63,6 @@ export class ContentConsultDao {
     }
   }
 
-  /**
-   * Obtener todos los tipos de contenido disponibles
-   */
   async findAllContentTypes(): Promise<ContentType[]> {
     try {
       return await this.contentTypeRepository.find({
@@ -87,9 +77,6 @@ export class ContentConsultDao {
     }
   }
 
-  /**
-   * Verificar si existe un contenido por ID
-   */
   async existsById(id: number): Promise<boolean> {
     try {
       const count = await this.contentRepository.count({ where: { id } });
@@ -103,9 +90,7 @@ export class ContentConsultDao {
     }
   }
 
-  /**
-   * Contar contenidos de un capítulo
-   */
+
   async countByChapterId(chapterId: number): Promise<number> {
     try {
       return await this.contentRepository.count({ 
@@ -120,9 +105,7 @@ export class ContentConsultDao {
     }
   }
 
-  /**
-   * Obtener el último order_index de un capítulo
-   */
+
   async getLastOrderIndexByChapterId(chapterId: number): Promise<number> {
     try {
       const result = await this.contentRepository
@@ -141,9 +124,6 @@ export class ContentConsultDao {
     }
   }
 
-  /**
-   * Verificar si existe un contenido con ese order_index en el capítulo
-   */
   async existsByOrderIndex(chapterId: number, orderIndex: number, excludeId?: number): Promise<boolean> {
     try {
       const query = this.contentRepository
@@ -166,9 +146,7 @@ export class ContentConsultDao {
     }
   }
 
-  /**
-   * Obtener estadísticas de contenidos de un capítulo
-   */
+
   async getChapterContentStats(chapterId: number): Promise<any> {
     try {
       const result = await this.contentRepository
@@ -190,9 +168,7 @@ export class ContentConsultDao {
     }
   }
 
-  /**
-   * Obtener estadísticas de contenidos de un curso completo
-   */
+
   async getCourseContentStats(courseId: number): Promise<any> {
     try {
       const result = await this.contentRepository
@@ -215,9 +191,6 @@ export class ContentConsultDao {
     }
   }
 
-  /**
-   * Calcular tamaño total de contenidos de un capítulo
-   */
   async getTotalSizeByChapterId(chapterId: number): Promise<number> {
     try {
       const result = await this.contentRepository

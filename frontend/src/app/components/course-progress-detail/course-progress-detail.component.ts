@@ -42,12 +42,12 @@ export class CourseProgressDetailComponent implements OnInit {
       next: (data) => {
         this.courseProgress = data;
         this.loading = false;
-        console.log('✅ Progreso del curso cargado:', data);
+        console.log('Progreso del curso cargado:', data);
       },
       error: (error) => {
         this.error = 'Error al cargar el progreso del curso';
         this.loading = false;
-        console.error('❌ Error:', error);
+        console.error('Error:', error);
       }
     });
   }
@@ -59,13 +59,13 @@ export class CourseProgressDetailComponent implements OnInit {
       // Desmarcar como completado
       this.progressService.uncompleteChapter(chapter.chapterId).subscribe({
         next: () => {
-          console.log('✅ Capítulo desmarcado');
+          console.log('Capítulo desmarcado');
           this.loadCourseProgress();
           this.processingChapter = null;
         },
         error: (error) => {
           this.error = 'Error al desmarcar el capítulo';
-          console.error('❌ Error:', error);
+          console.error('Error:', error);
           this.processingChapter = null;
         }
       });
@@ -73,13 +73,13 @@ export class CourseProgressDetailComponent implements OnInit {
       // Marcar como completado
       this.progressService.completeChapter(chapter.chapterId).subscribe({
         next: () => {
-          console.log('✅ Capítulo completado');
+          console.log('Capítulo completado');
           this.loadCourseProgress();
           this.processingChapter = null;
         },
         error: (error) => {
           this.error = 'Error al marcar el capítulo como completado';
-          console.error('❌ Error:', error);
+          console.error('Error:', error);
           this.processingChapter = null;
         }
       });
@@ -94,12 +94,12 @@ export class CourseProgressDetailComponent implements OnInit {
     if (confirm(`¿Estás seguro de reiniciar tu progreso en "${courseName}"? Esta acción no se puede deshacer.`)) {
       this.progressService.resetCourseProgress(this.courseId).subscribe({
         next: () => {
-          console.log('✅ Progreso reiniciado');
+          console.log('Progreso reiniciado');
           this.router.navigate(['/progress/dashboard']);
         },
         error: (error) => {
           this.error = 'Error al reiniciar el progreso';
-          console.error('❌ Error:', error);
+          console.error('Error:', error);
         }
       });
     }

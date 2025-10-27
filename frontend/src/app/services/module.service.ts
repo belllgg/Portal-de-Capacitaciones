@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
-import { CourseService } from './course.service'; // ✅ Importar CourseService
+import { CourseService } from './course.service';
 
 export interface Module {
   id: number;
@@ -34,7 +34,7 @@ export class ModuleService {
 
   constructor(
     private http: HttpClient,
-    private courseService: CourseService // ✅ Inyectar CourseService
+    private courseService: CourseService 
   ) {}
 
   private getHeaders(): HttpHeaders {
@@ -45,7 +45,6 @@ export class ModuleService {
     });
   }
 
-  // ✅ Obtener todos los módulos con conteo real usando CourseService
   getAllModules(): Observable<Module[]> {
     return this.http
       .get<{ success: boolean; message: string; data: Module[] }>(
@@ -57,7 +56,6 @@ export class ModuleService {
         switchMap((modules) => {
           if (!modules.length) return of(modules);
 
-          // ✅ Para cada módulo, obtener los cursos usando CourseService
           const requests = modules.map((mod) =>
             this.courseService.getCoursesByModule(mod.id).pipe(
               map((courses) => ({
@@ -85,7 +83,6 @@ export class ModuleService {
       );
   }
 
-  // ✅ Obtener módulo por ID
   getModuleById(id: number): Observable<Module> {
     return this.http
       .get<{ success: boolean; message: string; data: Module }>(
@@ -95,21 +92,21 @@ export class ModuleService {
       .pipe(map((response) => response.data));
   }
 
-  // ✅ Crear módulo
+  // Crear módulo
   createModule(module: CreateModuleDto): Observable<Module> {
     return this.http.post<Module>(`${this.apiUrl}/create`, module, {
       headers: this.getHeaders(),
     });
   }
 
-  // ✅ Actualizar módulo
+  // Actualizar módulo
   updateModule(id: number, module: UpdateModuleDto): Observable<Module> {
     return this.http.put<Module>(`${this.apiUrl}/update/${id}`, module, {
       headers: this.getHeaders(),
     });
   }
 
-  // ✅ Eliminar módulo
+  // Eliminar módulo
   deleteModule(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/delete/${id}`, {
       headers: this.getHeaders(),

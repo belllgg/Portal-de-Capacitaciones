@@ -18,7 +18,6 @@ export class ModuleFormComponent implements OnInit {
   error = '';
   moduleId: number | null = null;
 
-  // Lista de iconos disponibles (Font Awesome)
   availableIcons = [
     { value: 'fas fa-code', label: 'Código', icon: 'fas fa-code' },
     { value: 'fas fa-laptop-code', label: 'Laptop Código', icon: 'fas fa-laptop-code' },

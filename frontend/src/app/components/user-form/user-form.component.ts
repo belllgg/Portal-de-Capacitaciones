@@ -43,14 +43,12 @@ export class UserFormComponent implements OnInit {
         this.isEditMode = true;
         this.userEmail = params['email'];
 
-        // Quitar validación requerida de password en edición
         this.userForm.get('password')?.clearValidators();
         this.userForm.get('password')?.updateValueAndValidity();
 
         this.userService.getAllUsers().subscribe((users: User[]) => {
           const user = users.find(u => u.email === this.userEmail);
           if (user) {
-            // Usar setTimeout para asegurar que el DOM esté listo
             setTimeout(() => {
               this.userForm.patchValue({
                 email: user.email,

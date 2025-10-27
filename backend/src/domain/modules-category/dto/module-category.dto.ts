@@ -1,6 +1,5 @@
 import { IsString, IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
 
-// DTO para crear un módulo (solo admin)
 export class CreateModuleDto {
   @IsString()
   @IsNotEmpty({ message: 'El nombre es obligatorio' })
@@ -33,7 +32,6 @@ export class UpdateModuleDto {
   icon?: string;
 }
 
-// DTO de respuesta básico
 export class ModuleResponseDto {
   id: number;
   name: string;

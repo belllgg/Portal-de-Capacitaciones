@@ -13,9 +13,7 @@ export class ContentUpdateDao {
     private readonly contentRepository: Repository<ChapterContent>,
   ) {}
 
-  /**
-   * Actualizar un contenido existente
-   */
+
   async update(id: number, updateContentDto: UpdateContentDto): Promise<ChapterContent | null> {
     try {
       const result = await this.contentRepository.update(id, updateContentDto);
@@ -31,7 +29,6 @@ export class ContentUpdateDao {
     } catch (error) {
       this.logger.error(`Error al actualizar contenido en BD: ${error.message}`, error.stack);
       
-      // Manejo de errores de foreign key
       if (error.code === '23503') {
         throw new HttpException(
           'El tipo de contenido especificado no existe',
@@ -46,12 +43,9 @@ export class ContentUpdateDao {
     }
   }
 
-  /**
-   * Actualizar el order_index de múltiples contenidos (para reordenar)
-   */
+
   async updateOrderIndexes(updates: { id: number; orderIndex: number }[]): Promise<boolean> {
     try {
-      // Usar transacción para actualizar todos a la vez
       await this.contentRepository.manager.transaction(async (manager) => {
         for (const update of updates) {
           await manager.update(ChapterContent, update.id, { orderIndex: update.orderIndex });

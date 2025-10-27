@@ -12,9 +12,6 @@ export class ChapterConsultService {
     private readonly chapterConsultDao: ChapterConsultDao
   ) {}
 
-  /**
-   * Obtener todos los capítulos de un curso
-   */
   async findByCourseId(courseId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -34,9 +31,7 @@ export class ChapterConsultService {
     }
   }
 
-  /**
-   * Obtener solo capítulos PUBLICADOS de un curso
-   */
+
   async findPublishedByCourseId(courseId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -56,9 +51,7 @@ export class ChapterConsultService {
     }
   }
 
-  /**
-   * Obtener un capítulo por ID
-   */
+
   async findById(id: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -85,9 +78,6 @@ export class ChapterConsultService {
     }
   }
 
-  /**
-   * Obtener capítulos por estado
-   */
   async findByStateId(stateId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -107,9 +97,7 @@ export class ChapterConsultService {
     }
   }
 
-  /**
-   * Obtener estadísticas de capítulos de un curso
-   */
+
   async getCourseChapterStats(courseId: number): Promise<{ 
     success: boolean; 
     message: string; 
@@ -139,9 +127,6 @@ export class ChapterConsultService {
     }
   }
 
-  /**
-   * Mapear a DTO de respuesta completo
-   */
   private mapToResponseDto(chapter: Chapter): ChapterResponseDto {
     return {
       id: chapter.id,
@@ -162,9 +147,6 @@ export class ChapterConsultService {
     };
   }
 
-  /**
-   * Mapear a DTO de listado
-   */
   private mapToListItemDto(chapter: Chapter): ChapterListItemDto {
     return {
       id: chapter.id,
@@ -173,7 +155,7 @@ export class ChapterConsultService {
       orderIndex: chapter.orderIndex,
       durationMinutes: chapter.durationMinutes,
       stateName: chapter.state.name,
-      contentsCount: 0 // TODO: Cuando tengamos contents
+      contentsCount: 0 
     };
   }
 }

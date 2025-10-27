@@ -13,10 +13,7 @@ export class ModuleDeleteDao {
   ) {}
 
 
-  /**
-   * Eliminar un módulo
-   * NOTA: Solo se puede eliminar si no tiene cursos asociados (por el CASCADE)
-   */
+
   async delete(id: number): Promise<boolean> {
     try {
       const result = await this.moduleRepository.delete(id);
@@ -24,7 +21,6 @@ export class ModuleDeleteDao {
     } catch (error) {
       this.logger.error(`Error al eliminar módulo en BD: ${error.message}`, error.stack);
       
-      // Si hay cursos asociados, no se puede eliminar
       if (error.code === '23503') { // Código de violación de foreign key
         throw new HttpException(
           'No se puede eliminar el módulo porque tiene cursos asociados',

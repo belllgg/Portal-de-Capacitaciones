@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ContentService, Content, ContentType } from '../../services/content.service';
 import { ChapterService, Chapter } from '../../services/chapter.service';
 import { CourseService, Course } from '../../services/course.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-content-list',
@@ -21,18 +23,19 @@ export class ContentListComponent implements OnInit {
   loading = false;
   error = '';
   
-  // Filtros
   selectedCourseId: number | null = null;
   selectedChapterId: number | null = null;
   selectedChapterName = '';
   
-  // Iconos por tipo de contenido
+  viewingContent: Content | null = null;
+  safeUrl: SafeResourceUrl | null = null;
+  
   contentTypeIcons: { [key: number]: string } = {
-    1: 'fas fa-video',        // VIDEO
-    2: 'fas fa-file-pdf',      // PDF
-    3: 'fas fa-file-powerpoint', // PRESENTATION
-    4: 'fas fa-file-word',     // DOCUMENT
-    5: 'fas fa-link'           // LINK
+    1: 'fas fa-video',
+    2: 'fas fa-file-pdf',
+    3: 'fas fa-file-powerpoint',
+    4: 'fas fa-file-word',
+    5: 'fas fa-link'
   };
 
   constructor(
@@ -40,21 +43,29 @@ export class ContentListComponent implements OnInit {
     private chapterService: ChapterService,
     private courseService: CourseService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private sanitizer: DomSanitizer,
+    public authService: AuthService,
   ) {}
 
-  ngOnInit(): void {
-    this.loadCourses();
-    this.loadContentTypes();
+ ngOnInit(): void {
+  this.loadCourses();
+  this.loadContentTypes();
+  
+  this.route.queryParams.subscribe(params => {
+    if (params['courseId']) {
+      this.selectedCourseId = +params['courseId'];
+      this.onCourseChange();
+    }
     
-    // Verificar si viene un chapterId por parámetro
-    this.route.queryParams.subscribe(params => {
-      if (params['chapterId']) {
-        this.selectedChapterId = +params['chapterId'];
-        this.loadContentsByChapter(this.selectedChapterId);
-      }
-    });
-  }
+    if (params['chapterId']) {
+      this.selectedChapterId = +params['chapterId'];
+      setTimeout(() => {
+        this.loadContentsByChapter(this.selectedChapterId!);
+      }, 500);
+    }
+  });
+}
 
   loadCourses(): void {
     this.courseService.getAllCourses().subscribe({
@@ -82,6 +93,7 @@ export class ContentListComponent implements OnInit {
     this.selectedChapterId = null;
     this.contents = [];
     this.chapters = [];
+    this.closeViewer();
     
     if (this.selectedCourseId) {
       this.chapterService.getChaptersByCourse(this.selectedCourseId).subscribe({
@@ -96,9 +108,9 @@ export class ContentListComponent implements OnInit {
   }
 
   onChapterChange(): void {
+    this.closeViewer();
     if (this.selectedChapterId) {
       this.loadContentsByChapter(this.selectedChapterId);
-      // Actualizar URL sin recargar
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: { chapterId: this.selectedChapterId },
@@ -154,7 +166,64 @@ export class ContentListComponent implements OnInit {
   }
 
   viewContent(content: Content): void {
-    window.open(content.fileUrl, '_blank');
+    this.viewingContent = content;
+    
+    let url = content.fileUrl;
+    
+    if (this.isYouTubeUrl(url)) {
+      url = this.convertToYouTubeEmbed(url);
+    }
+    
+    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    
+    setTimeout(() => {
+      document.getElementById('content-viewer')?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }, 100);
+  }
+
+  closeViewer(): void {
+    this.viewingContent = null;
+    this.safeUrl = null;
+  }
+
+  isYouTubeUrl(url: string): boolean {
+    return url.includes('youtube.com') || url.includes('youtu.be');
+  }
+
+  convertToYouTubeEmbed(url: string): string {
+    let videoId = '';
+    
+    if (url.includes('youtube.com/watch')) {
+      const urlParams = new URLSearchParams(url.split('?')[1]);
+      videoId = urlParams.get('v') || '';
+    } else if (url.includes('youtu.be/')) {
+      videoId = url.split('youtu.be/')[1].split('?')[0];
+    }
+    
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  isVideoContent(content: Content): boolean {
+    if (content.contentTypeId === 1) return true;
+    
+    const url = content.fileUrl.toLowerCase();
+    return url.endsWith('.mp4') || 
+           url.endsWith('.webm') || 
+           url.endsWith('.ogg') ||
+           url.endsWith('.mov') ||
+           url.includes('youtube.com') || 
+           url.includes('youtu.be') ||
+           url.includes('vimeo.com');
+  }
+
+  isPdfContent(content: Content): boolean {
+    if (content.contentTypeId === 2) return true;
+    
+    const url = content.fileUrl.toLowerCase();
+    return url.endsWith('.pdf') || url.includes('.pdf');
   }
 
   moveUp(content: Content): void {
@@ -189,13 +258,24 @@ export class ContentListComponent implements OnInit {
       }
     });
   }
-
+goToChapters(): void {
+  if (this.selectedCourseId) {
+    this.router.navigate(['/chapters'], {
+      queryParams: { courseId: this.selectedCourseId }
+    });
+  } else {
+    this.router.navigate(['/chapters']);
+  }
+}
   deleteContent(content: Content): void {
     if (confirm(`¿Estás seguro de eliminar el contenido "${content.title || 'Sin título'}"?`)) {
       this.contentService.deleteContent(content.id).subscribe({
         next: () => {
           if (this.selectedChapterId) {
             this.loadContentsByChapter(this.selectedChapterId);
+          }
+          if (this.viewingContent?.id === content.id) {
+            this.closeViewer();
           }
         },
         error: (error) => {

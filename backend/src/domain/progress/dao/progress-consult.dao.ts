@@ -14,13 +14,7 @@ export class ProgressConsultDao {
     private readonly chapterProgressRepository: Repository<UserChapterProgress>,
   ) {}
 
-  // ==========================================
-  // CONSULTAS DE PROGRESO DE CURSO
-  // ==========================================
-
-  /**
-   * Obtener progreso de un usuario en un curso específico
-   */
+ 
   async findCourseProgress(userId: number, courseId: number): Promise<UserCourseProgress | null> {
     try {
       return await this.courseProgressRepository.findOne({
@@ -36,9 +30,6 @@ export class ProgressConsultDao {
     }
   }
 
-  /**
-   * Obtener todos los cursos en progreso de un usuario
-   */
   async findUserCoursesInProgress(userId: number): Promise<UserCourseProgress[]> {
     try {
       return await this.courseProgressRepository.find({
@@ -55,9 +46,6 @@ export class ProgressConsultDao {
     }
   }
 
-  /**
-   * Obtener todos los cursos completados de un usuario
-   */
   async findUserCoursesCompleted(userId: number): Promise<UserCourseProgress[]> {
   try {
     return await this.courseProgressRepository
@@ -78,9 +66,6 @@ export class ProgressConsultDao {
 }
 
 
-  /**
-   * Obtener todos los progresos de un usuario
-   */
   async findAllUserProgress(userId: number): Promise<UserCourseProgress[]> {
     try {
       return await this.courseProgressRepository.find({
@@ -97,9 +82,6 @@ export class ProgressConsultDao {
     }
   }
 
-  /**
-   * Contar cursos iniciados por un usuario
-   */
   async countUserCoursesStarted(userId: number): Promise<number> {
     try {
       return await this.courseProgressRepository.count({ where: { userId } });
@@ -112,9 +94,7 @@ export class ProgressConsultDao {
     }
   }
 
-  /**
-   * Contar cursos completados por un usuario
-   */
+
   async countUserCoursesCompleted(userId: number): Promise<number> {
     try {
       return await this.courseProgressRepository
@@ -131,13 +111,7 @@ export class ProgressConsultDao {
     }
   }
 
-  // ==========================================
-  // CONSULTAS DE PROGRESO DE CAPÍTULO
-  // ==========================================
 
-  /**
-   * Obtener progreso de un usuario en un capítulo específico
-   */
   async findChapterProgress(userId: number, chapterId: number): Promise<UserChapterProgress | null> {
     try {
       return await this.chapterProgressRepository.findOne({
@@ -153,9 +127,7 @@ export class ProgressConsultDao {
     }
   }
 
-  /**
-   * Obtener progreso de todos los capítulos de un curso para un usuario
-   */
+ 
   async findUserChapterProgressByCourse(userId: number, courseId: number): Promise<UserChapterProgress[]> {
     try {
       return await this.chapterProgressRepository
@@ -174,9 +146,7 @@ export class ProgressConsultDao {
     }
   }
 
-  /**
-   * Contar capítulos completados por un usuario en un curso
-   */
+
   async countCompletedChaptersByCourse(userId: number, courseId: number): Promise<number> {
     try {
       return await this.chapterProgressRepository
@@ -195,9 +165,7 @@ export class ProgressConsultDao {
     }
   }
 
-  /**
-   * Contar total de capítulos completados por un usuario
-   */
+
   async countUserChaptersCompleted(userId: number): Promise<number> {
     try {
       return await this.chapterProgressRepository.count({
@@ -212,13 +180,7 @@ export class ProgressConsultDao {
     }
   }
 
-  // ==========================================
-  // ESTADÍSTICAS Y ANALYTICS
-  // ==========================================
 
-  /**
-   * Calcular horas totales estudiadas por un usuario
-   */
   async calculateTotalHoursStudied(userId: number): Promise<number> {
     try {
       const result = await this.courseProgressRepository
@@ -239,9 +201,6 @@ export class ProgressConsultDao {
     }
   }
 
-  /**
-   * Obtener actividad reciente de un usuario (últimos 10 eventos)
-   */
   async findRecentActivity(userId: number, limit: number = 10): Promise<any[]> {
     try {
       return await this.chapterProgressRepository
@@ -262,9 +221,7 @@ export class ProgressConsultDao {
     }
   }
 
-  /**
-   * Obtener progreso por módulo para un usuario
-   */
+ 
   async findProgressByModule(userId: number): Promise<any[]> {
     try {
       return await this.courseProgressRepository
@@ -291,13 +248,7 @@ export class ProgressConsultDao {
     }
   }
 
-  // ==========================================
-  // ANALYTICS PARA ADMIN
-  // ==========================================
 
-  /**
-   * Obtener analytics de un curso (cuántos usuarios, progreso promedio, etc)
-   */
   async getCourseAnalytics(courseId: number): Promise<any> {
     try {
       const result = await this.courseProgressRepository
@@ -319,9 +270,6 @@ export class ProgressConsultDao {
     }
   }
 
-  /**
-   * Obtener ranking de usuarios (top estudiantes)
-   */
   async getUserRanking(limit: number = 10): Promise<any[]> {
     try {
       return await this.courseProgressRepository
@@ -345,4 +293,91 @@ export class ProgressConsultDao {
       );
     }
   }
+
+  async findUserModulesCompleted(userId: number): Promise<any[]> {
+  try {
+    const totalCoursesSubQuery = this.courseProgressRepository
+      .createQueryBuilder('cp')
+      .innerJoin('cp.course', 'c')
+      .where('c.module_id = module.id')
+      .andWhere('c.state_id = :stateId', { stateId: 2 }) // Solo cursos activos
+      .select('COUNT(DISTINCT c.id)');
+
+    return await this.courseProgressRepository
+      .createQueryBuilder('progress')
+      .innerJoin('progress.course', 'course')
+      .innerJoin('course.module', 'module')
+      .select('module.id', 'moduleId')
+      .addSelect('module.name', 'moduleName')
+      .addSelect('module.icon', 'moduleIcon')
+      .addSelect('module.description', 'moduleDescription')
+      .addSelect('COUNT(DISTINCT course.id)', 'completedCourses')
+      .addSelect(`(${totalCoursesSubQuery.getQuery()})`, 'totalCourses')
+      .addSelect('MAX(progress.completed_at)', 'completedAt') 
+      .where('progress.user_id = :userId', { userId })
+      .andWhere('progress.completed_at IS NOT NULL')
+      .andWhere('course.state_id = :stateId', { stateId: 2 })
+      .groupBy('module.id')
+      .addGroupBy('module.name')
+      .addGroupBy('module.icon')
+      .addGroupBy('module.description')
+      .having(`COUNT(DISTINCT course.id) = (${totalCoursesSubQuery.getQuery()})`) // Solo módulos completados
+      .setParameters(totalCoursesSubQuery.getParameters())
+      .getRawMany();
+  } catch (error) {
+    this.logger.error(`Error al buscar módulos completados: ${error.message}`, error.stack);
+    throw new HttpException(
+      'Error al consultar módulos completados',
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
+async findDetailedModuleProgress(userId: number): Promise<any[]> {
+  try {
+    const modules = await this.courseProgressRepository.query(`
+      SELECT 
+        m.id as "moduleId",
+        m.name as "moduleName",
+        m.description as "moduleDescription",
+        m.icon as "moduleIcon",
+        COUNT(DISTINCT c.id) as "totalCourses",
+        COUNT(DISTINCT CASE WHEN ucp.completed_at IS NOT NULL THEN c.id END) as "completedCourses",
+        COUNT(DISTINCT CASE WHEN ucp.id IS NOT NULL AND ucp.completed_at IS NULL THEN c.id END) as "inProgressCourses",
+        MIN(ucp.started_at) as "startedAt",
+        MAX(ucp.completed_at) as "lastCompletedAt",
+        CASE 
+          WHEN COUNT(DISTINCT c.id) = COUNT(DISTINCT CASE WHEN ucp.completed_at IS NOT NULL THEN c.id END) 
+            AND COUNT(DISTINCT c.id) > 0 
+          THEN 'completed'
+          WHEN COUNT(DISTINCT CASE WHEN ucp.id IS NOT NULL THEN c.id END) > 0 
+          THEN 'in_progress'
+          ELSE 'not_started'
+        END as "status"
+      FROM modules m
+      LEFT JOIN courses c ON c.module_id = m.id AND c.state_id = 2
+      LEFT JOIN user_course_progress ucp ON ucp.course_id = c.id AND ucp.user_id = $1
+      GROUP BY m.id, m.name, m.description, m.icon
+      HAVING COUNT(DISTINCT c.id) > 0
+      ORDER BY 
+        CASE 
+          WHEN COUNT(DISTINCT c.id) = COUNT(DISTINCT CASE WHEN ucp.completed_at IS NOT NULL THEN c.id END) 
+            AND COUNT(DISTINCT c.id) > 0 
+          THEN 3
+          WHEN COUNT(DISTINCT CASE WHEN ucp.id IS NOT NULL THEN c.id END) > 0 
+          THEN 1
+          ELSE 2
+        END,
+        m.name
+    `, [userId]);
+
+    return modules;
+  } catch (error) {
+    this.logger.error(`Error al obtener progreso de módulos: ${error.message}`, error.stack);
+    throw new HttpException(
+      'Error al consultar progreso de módulos',
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+}
 }

@@ -15,9 +15,6 @@ export class ModuleUpdateDao {
 
 
 
-  /**
-   * Actualizar un módulo existente
-   */
   async update(id: number, updateModuleDto: UpdateModuleDto): Promise<Modules | null> {
     try {
       const result = await this.moduleRepository.update(id, updateModuleDto);
@@ -30,7 +27,6 @@ export class ModuleUpdateDao {
     } catch (error) {
       this.logger.error(`Error al actualizar módulo en BD: ${error.message}`, error.stack);
       
-      // Manejo de error de duplicado
       if (error.code === '23505') {
         throw new HttpException(
           'Ya existe un módulo con ese nombre',

@@ -1,4 +1,3 @@
 export const API_CONFIG = {
-  production: true,
-  apiUrl: '__API_URL__'  // Railway reemplazará esto
+  apiUrl: 'https://portal-de-capacitaciones-production.up.railway.app'
 };

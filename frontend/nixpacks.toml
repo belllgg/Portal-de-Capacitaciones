@@ -1,14 +1,11 @@
 [phases.setup]
-nixPkgs = ["nodejs_20"]
+nixPkgs = ["nodejs_20", "nginx"]
 
 [phases.install]
 cmds = ["npm ci"]
 
 [phases.build]
-cmds = [
-  "npx ng build",
-  "ls -la dist/portal-capacitaciones/"
-]
+cmds = ["npx ng build --configuration production"]
 
 [start]
-cmd = "npm run serve:ssr:portal-capacitaciones"
+cmd = "npx serve dist/portal-capacitaciones/browser -l 8080"

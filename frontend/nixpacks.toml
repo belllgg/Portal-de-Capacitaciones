@@ -8,4 +8,4 @@ cmds = ["npm ci"]
 cmds = ["npx ng build --configuration production"]
 
 [start]
-cmd = "npx serve dist/portal-capacitaciones/browser -l tcp://0.0.0.0:$PORT"
+cmd = "npx serve dist/portal-capacitaciones/browser -s -l 0.0.0.0:$PORT"

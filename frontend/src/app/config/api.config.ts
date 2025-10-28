@@ -1,4 +1,4 @@
 export const API_CONFIG = {
   production: false,
-  apiUrl: 'http://localhost:3000'
+  apiUrl: 'https://diplomatic-optimism-production.up.railway.app/'
 };

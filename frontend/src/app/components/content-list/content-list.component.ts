@@ -48,24 +48,24 @@ export class ContentListComponent implements OnInit {
     public authService: AuthService,
   ) {}
 
- ngOnInit(): void {
-  this.loadCourses();
-  this.loadContentTypes();
-  
-  this.route.queryParams.subscribe(params => {
-    if (params['courseId']) {
-      this.selectedCourseId = +params['courseId'];
-      this.onCourseChange();
-    }
+  ngOnInit(): void {
+    this.loadCourses();
+    this.loadContentTypes();
     
-    if (params['chapterId']) {
-      this.selectedChapterId = +params['chapterId'];
-      setTimeout(() => {
-        this.loadContentsByChapter(this.selectedChapterId!);
-      }, 500);
-    }
-  });
-}
+    this.route.queryParams.subscribe(params => {
+      if (params['courseId']) {
+        this.selectedCourseId = +params['courseId'];
+        this.onCourseChange();
+      }
+      
+      if (params['chapterId']) {
+        this.selectedChapterId = +params['chapterId'];
+        setTimeout(() => {
+          this.loadContentsByChapter(this.selectedChapterId!);
+        }, 500);
+      }
+    });
+  }
 
   loadCourses(): void {
     this.courseService.getAllCourses().subscribe({
@@ -131,6 +131,7 @@ export class ContentListComponent implements OnInit {
     
     this.contentService.getContentsByChapter(chapterId).subscribe({
       next: (data) => {
+        console.log('Contenidos recibidos:', data); // Para debug
         this.contents = data.sort((a, b) => a.orderIndex - b.orderIndex);
         this.loading = false;
       },
@@ -258,15 +259,17 @@ export class ContentListComponent implements OnInit {
       }
     });
   }
-goToChapters(): void {
-  if (this.selectedCourseId) {
-    this.router.navigate(['/chapters'], {
-      queryParams: { courseId: this.selectedCourseId }
-    });
-  } else {
-    this.router.navigate(['/chapters']);
+
+  goToChapters(): void {
+    if (this.selectedCourseId) {
+      this.router.navigate(['/chapters'], {
+        queryParams: { courseId: this.selectedCourseId }
+      });
+    } else {
+      this.router.navigate(['/chapters']);
+    }
   }
-}
+
   deleteContent(content: Content): void {
     if (confirm(`¿Estás seguro de eliminar el contenido "${content.title || 'Sin título'}"?`)) {
       this.contentService.deleteContent(content.id).subscribe({
@@ -286,9 +289,31 @@ goToChapters(): void {
     }
   }
 
-  formatFileSize(sizeMb?: number): string {
-    if (!sizeMb) return '-';
-    if (sizeMb < 1) return `${(sizeMb * 1024).toFixed(0)} KB`;
-    return `${sizeMb.toFixed(2)} MB`;
+  formatFileSize(sizeMb: any): string {
+    if (sizeMb === null || sizeMb === undefined || sizeMb === '') {
+      return '-';
+    }
+    
+    let size: number;
+    if (typeof sizeMb === 'string') {
+      size = parseFloat(sizeMb);
+    } else {
+      size = Number(sizeMb);
+    }
+    
+    if (isNaN(size) || !isFinite(size)) {
+      return '-';
+    }
+    
+    if (size === 0) {
+      return '0 MB';
+    }
+    
+
+    if (size < 1) {
+      return `${(size * 1024).toFixed(0)} KB`;
+    }
+    
+    return `${size.toFixed(2)} MB`;
   }
 }

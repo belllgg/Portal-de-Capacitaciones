@@ -1,4 +1,4 @@
 export const API_CONFIG = {
   production: false,
-  apiUrl: 'https://portal-de-capacitaciones-production.up.railway.app'
+  apiUrl: 'http://localhost:3000'
 };

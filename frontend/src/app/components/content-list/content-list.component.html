@@ -205,18 +205,12 @@
                   (click)="viewContent(content)">
                   <i class="fas fa-eye"></i> Ver
                 </button>
-                <button *ngIf="authService.canEditModules()"
-
-                  class="btn btn-sm btn-outline-primary me-2"
-                  (click)="editContent(content)">
-                  <i class="fas fa-edit"></i> Editar
-                </button>
-                <button *ngIf="authService.canDeleteModules()"
-
-                  class="btn btn-sm btn-outline-danger"
-                  (click)="deleteContent(content)">
-                  <i class="fas fa-trash"></i> Eliminar
-                </button>
+              <button *ngIf="authService.canEditModules()" class="btn btn-sm btn-outline-primary me-2" (click)="editContent(content)">
+  <i class="fas fa-edit"></i> Editar
+</button>
+<button *ngIf="authService.canDeleteModules()" class="btn btn-sm btn-outline-danger" (click)="deleteContent(content)">
+  <i class="fas fa-trash"></i> Eliminar
+</button>
               </td>
             </tr>
           </tbody>
